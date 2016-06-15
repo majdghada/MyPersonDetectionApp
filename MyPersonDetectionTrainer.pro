@@ -13,8 +13,44 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    svmparametersdialog.cpp \
+    svmparameters.cpp \
+    mysvm.cpp \
+    my_utilties.cpp \
+    mypersondetector.cpp \
+    detectionwindow.cpp \
+    dataloader.cpp \
+    detectortestdialog.cpp \
+    featureextractionstrategy.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    svmparametersdialog.h \
+    svmparameters.h \
+    mysvm.h \
+    my_utilties.h \
+    mypersondetector.h \
+    detectionwindow.h \
+    dataloader.h \
+    detectortestdialog.h \
+    featureextractionstrategy.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    svmparametersdialog.ui \
+    detectortestdialog.ui
+
+CONFIG += c++11
+
+LIBS += -L/usr/local/lib \
+        -L/usr/lib/x86_64-linux-gnu \
+        -lopencv_core \
+        -lopencv_imgcodecs \
+        -lopencv_highgui \
+        -lopencv_imgproc \
+        -lopencv_videoio \
+        -lopencv_video \
+        -lopencv_features2d \
+        -lopencv_objdetect \
+        -lopencv_nonfree \
+        -lopencv_xfeatures2d \
+        -lopencv_ml
