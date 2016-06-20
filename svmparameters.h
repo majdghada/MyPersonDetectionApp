@@ -20,6 +20,7 @@ private:
 
 public:
     SVMParameters();
+    SVMParameters(const SVMParameters & other);
     void setParameters(MySVM &svm);
     void getParameters(const MySVM &svm);
 

@@ -104,15 +104,29 @@ SVMParameters::SVMParameters()
 {
     setSvm_c(0.01);
     setSvm_Gamma(0.000006);
-    setSvm_type(SVM::EPS_SVR);
+    setSvm_type(SVM::C_SVC);
     setSvm_kernel(SVM::LINEAR);
-    setSvm_MaxIter(1000);
+    setSvm_MaxIter(100);
     setSvm_EPS(0.003);
     setSvm_degree(3);
     setSvm_P(0.1);
     setSvm_Nu(0.5);
     setSvm_Coef0(0.0);
 
+}
+
+SVMParameters::SVMParameters(const SVMParameters &other)
+{
+    setSvm_c(other.getSvm_c());
+    setSvm_Gamma(other.getSvm_Gamma());
+    setSvm_type(other.getSvm_type());
+    setSvm_kernel(other.getSvm_kernel());
+    setSvm_MaxIter(other.getSvm_MaxIter());
+    setSvm_EPS(other.getSvm_EPS());
+    setSvm_degree(other.getSvm_degree());
+    setSvm_P(other.getSvm_P());
+    setSvm_Nu(other.getSvm_Nu());
+    setSvm_Coef0(other.getSvm_Coef0());
 }
 
 void SVMParameters::setParameters(MySVM &svm)
@@ -130,7 +144,9 @@ void SVMParameters::setParameters(MySVM &svm)
 
 void SVMParameters::getParameters(const MySVM &svm)
 {
-    //TODO : add Coef0,Nu,P
+    setSvm_Coef0(svm.getSvm()->getCoef0());
+    setSvm_Nu(svm.getSvm()->getNu());
+    setSvm_P(svm.getSvm()->getP());
     setSvm_c(svm.getSvm()->getC());
     setSvm_Gamma(svm.getSvm()->getGamma());
     setSvm_type(svm.getSvm()->getType());

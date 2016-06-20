@@ -15,7 +15,7 @@ public:
     explicit detectorTestDialog(QWidget *parent = 0);
     ~detectorTestDialog();
 
-    detectorTestDialog(QWidget *parent, MyPersonDetector detector, QStringList posData, QStringList negData);
+    detectorTestDialog(QWidget *parent, MyPersonDetector *detector, QStringList posData, QStringList negData);
     void updateProgress(int correct, int all);
     bool getTerminated();
 public slots:

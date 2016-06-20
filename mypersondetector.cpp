@@ -7,6 +7,7 @@
 #include "mainwindow.h"
 #include "detectionwindow.h"
 #include <QtDebug>
+#include <thread>
 using namespace std;
 MyPersonDetector::MyPersonDetector()
 {
@@ -22,6 +23,7 @@ MyPersonDetector::MyPersonDetector()
 //    while (neg.size()>30)neg.pop_back();
 
 //    setdata(pos,neg);
+    fxs=new SIFT();
 }
 
 void MyPersonDetector::setdata(QStringList pos, QStringList neg)
@@ -33,17 +35,13 @@ void MyPersonDetector::setdata(QStringList pos, QStringList neg)
     m_dbg<<"started loading images";
     QStringList *filenames=&posData;
     for (QString filename:*filenames){
-        Mat img=imread(filename.toStdString(),IMREAD_GRAYSCALE);
-        double div=max(img.rows/300.0,img.cols/300.0);
-        cv::resize(img,img,cv::Size(img.cols/div,img.rows/div));
+        Mat img=imread(filename.toStdString());
         positiveImages.push_back(img);
     }
     m_dbg<<"finished loading positive";
     filenames=&negData;
     for (auto filename:*filenames){
-        Mat img=imread(filename.toStdString(),IMREAD_GRAYSCALE);
-        double div=max(img.rows/300.0,img.cols/300.0);
-        cv::resize(img,img,cv::Size(img.cols/div,img.rows/div));
+        Mat img=imread(filename.toStdString());
         negativeImages.push_back(img);
     }
     m_dbg<<"finished loading negative";
@@ -52,6 +50,7 @@ void MyPersonDetector::setdata(QStringList pos, QStringList neg)
 
 void MyPersonDetector::loadSVM(string path)
 {
+    svm.getSvm()->clear();
     svm.load(path);
     m_dbg<<svm.getSvm()->getSupportVectors().size().height<<" "<<svm.getSvm()->getSupportVectors().size().width<<endl;
     m_dbg<<svm.getSvm()->getVarCount()<<endl;
@@ -61,50 +60,56 @@ void MyPersonDetector::saveSVM(string path)
 {
     svm.getSvm()->save(path);
 }
-Mat getDSIFTDescriptors(Mat img){
 
-    resize(img,img,Size(64,128));
-    Ptr<xfeatures2d::SIFT> sift = xfeatures2d::SIFT::create();
-    Ptr<xfeatures2d::SIFT> sift1 = xfeatures2d::SIFT::create(4);
-    vector <KeyPoint> kps1;
-    Mat des1;
-
-    sift1->detect(img,kps1);
-    sift1->compute(img,kps1,des1);
-
-    Mat res=des1.t();
-    int rows=8,cols=6;
-    for (int i=0;i<rows;++i){
-        for (int j=0;j<cols;++j){
-            Range rowrange(i*img.rows/rows,(i+1)*img.rows/rows-1),
-                  colrange(j*img.cols/cols,(j+1)*img.cols/cols-1);
-            Mat subimg=img(rowrange,colrange);
-            vector<KeyPoint> kps;
-            Mat des,labels,centers;
-            sift->detect(subimg,kps);
-            if (kps.size()==0){
-                kps.push_back(KeyPoint((colrange.start+colrange.end)/2.0,
-                                       (rowrange.start+rowrange.end)/2.0,
-                                       colrange.size()));
-            }
-            sift->compute(subimg,kps,des);
-            if (des.rows==1)
-                centers=des;
-            else
-                kmeans(des,1,labels,TermCriteria( TermCriteria::EPS+TermCriteria::COUNT,
-                                                  10, 1.0),1,KMEANS_PP_CENTERS, centers);
-            if (i==0&&j==0){
-                res=centers.t();
-            }
-            else {
-                res.push_back(centers.t());
-            }
-
-        }
-    }
-
-    return res.t();
+void MyPersonDetector::setFeatureExtractionStrategy(FeatureExtractionStrategy *fxs)
+{
+    this->fxs=fxs;
+    m_dbg<<" will use "<<QString(fxs->strategyName().c_str());
 }
+//Mat getDSIFTDescriptors(Mat img){
+
+//    resize(img,img,Size(64,128));
+//    Ptr<xfeatures2d::SIFT> sift = xfeatures2d::SIFT::create();
+//    Ptr<xfeatures2d::SIFT> sift1 = xfeatures2d::SIFT::create(4);
+//    vector <KeyPoint> kps1;
+//    Mat des1;
+
+//    sift1->detect(img,kps1);
+//    sift1->compute(img,kps1,des1);
+
+//    Mat res=des1.t();
+//    int rows=8,cols=6;
+//    for (int i=0;i<rows;++i){
+//        for (int j=0;j<cols;++j){
+//            Range rowrange(i*img.rows/rows,(i+1)*img.rows/rows-1),
+//                  colrange(j*img.cols/cols,(j+1)*img.cols/cols-1);
+//            Mat subimg=img(rowrange,colrange);
+//            vector<KeyPoint> kps;
+//            Mat des,labels,centers;
+//            sift->detect(subimg,kps);
+//            if (kps.size()==0){
+//                kps.push_back(KeyPoint((colrange.start+colrange.end)/2.0,
+//                                       (rowrange.start+rowrange.end)/2.0,
+//                                       colrange.size()));
+//            }
+//            sift->compute(subimg,kps,des);
+//            if (des.rows==1)
+//                centers=des;
+//            else
+//                kmeans(des,1,labels,TermCriteria( TermCriteria::EPS+TermCriteria::COUNT,
+//                                                  10, 1.0),1,KMEANS_PP_CENTERS, centers);
+//            if (i==0&&j==0){
+//                res=centers.t();
+//            }
+//            else {
+//                res.push_back(centers.t());
+//            }
+
+//        }
+//    }
+
+//    return res.t();
+//}
 
 SVMParameters & MyPersonDetector::getParameters()
 {
@@ -114,6 +119,15 @@ SVMParameters & MyPersonDetector::getParameters()
 void MyPersonDetector::setParameters(const SVMParameters &value)
 {
     parameters = value;
+}
+void trainigData_preperation_thread(FeatureExtractionStrategy * fxs,vector<Mat>* images,vector<int>* labels,int st,int en,MySVM * svm,Mutex *mtx){
+    for (int i=st;i<en;++i){
+        Mat feat=fxs->getFeatures((*images)[i]);
+        m_dbg<<"finished the "<<i+1<<"th image";
+        mtx->lock();
+        svm->addExample(feat,(*labels)[i]);
+        mtx->unlock();
+    }
 }
 
 void MyPersonDetector::InitSVMTrainingData(){
@@ -129,11 +143,23 @@ void MyPersonDetector::InitSVMTrainingData(){
     }
     m_dbg<<images.size()<<" images ready for feature extraction ";
     svm.clearTrainingData();
-    for (unsigned i=0;i<images.size();++i){
-        Mat feat=getDSIFTDescriptors(images[i]);
-        m_dbg<<"finished the "<<i+1<<"th image";
-        svm.addExample(feat,labels[i]);
+    int sz=images.size()/8;
+    std::thread * threads[8];
+    Mutex mtx;
+    for (int i=0;i<8;++i){
+        threads[i]=new std::thread(trainigData_preperation_thread,fxs,&images,&labels,sz*i,(i==7)?images.size():sz*(i+1),&svm,&mtx);
     }
+    for (int i=0;i<8;++i){
+        threads[i]->join();
+        delete threads[i];
+    }
+//    for (int i=0;i<images.size();++i){
+//        Mat feat=fxs->getFeatures((images)[i]);
+//        m_dbg<<"finished the "<<i+1<<"th image";
+////        mtx->lock();
+//        svm.addExample(feat,(labels)[i]);
+////        mtx->unlock();
+//    }
     m_dbg<<"finished extracting features";
 }
 
@@ -167,12 +193,12 @@ int MyPersonDetector::test()
     vector<int> labels;
     QStringList filenames=posData;
     for (auto filename:filenames){
-        images.push_back(imread(filename.toStdString(),IMREAD_GRAYSCALE));
+        images.push_back(imread(filename.toStdString()));
         labels.push_back(1);
     }
     filenames=negData;
     for (auto filename:filenames){
-        images.push_back(imread(filename.toStdString(),IMREAD_GRAYSCALE));
+        images.push_back(imread(filename.toStdString()));
         labels.push_back(-1);
     }
     int res=0;
@@ -187,7 +213,7 @@ int MyPersonDetector::test()
 
 float MyPersonDetector::predict(Mat img)
 {
-    Mat feat=getDSIFTDescriptors(img);
+    Mat feat=fxs->getFeatures(img);
     return svm.predict(feat);
 }
 
@@ -196,22 +222,34 @@ void MyPersonDetector::setDataLoader(DataLoader *loader)
     dataLoader=loader;
 }
 
+void prediction_thread(MyPersonDetector * detector , vector<DetectionWindow>* slidingWindows,vector<Rect>*res,int st,int en,Mutex *mtx){
+    for (int i=st;i<en;++i){
+        int ans=-1;
+        if (detector->predict((*slidingWindows)[i].getImageWindow())==1){
+            mtx->lock();
+            res->push_back((*slidingWindows)[i].getROI());
+            mtx->unlock();
+            ans=1;
+        }
+        m_dbg<<"checking "<<i<<"th window, found "<<ans;
+    }
+}
 
 vector<Rect> MyPersonDetector::detectMultiScale(Mat img)
 {
     vector<Rect> res;
-    vector<DetectionWindow> slidingWindows=applySlidingWindow(img);
+    vector<DetectionWindow> slidingWindows=applySlidingWindow(img,64,128,min(img.rows/50,img.cols/50));
     m_dbg<<"found "<<slidingWindows.size()<<"sliding windows";
-    int id=0;
-    for (DetectionWindow window:slidingWindows){
-        id++;
-        int ans=-1;
-        if (predict(window.getImageWindow())==1){
-            res.push_back(window.getROI());
-            ans=1;
-        }
+    int sz=slidingWindows.size()/8;
+    std::thread * threads[8];
+    Mutex  mtx;
+    for (int i=0;i<8;++i){
+        threads[i]=new std::thread(prediction_thread,this,&slidingWindows,&res,sz*i,(i==7)?slidingWindows.size():sz*(i+1),&mtx);
+    }
 
-        m_dbg<<"checking "<<id<<"th window, found "<<ans;
+    for (int i=0;i<8;++i){
+        threads[i]->join();
+        delete threads[i];
     }
     return res;
 }

@@ -10,12 +10,12 @@ detectorTestDialog::detectorTestDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 }
-void test_thread(detectorTestDialog *dialog, MyPersonDetector detector,QStringList posData,QStringList negData,Mutex * mtx){
+void test_thread(detectorTestDialog *dialog, MyPersonDetector *detector,QStringList posData,QStringList negData,Mutex * mtx){
     for (auto filename:posData){
         int res=0;
         int cnt=0;
-        Mat img=getCentral64x128Image(imread(filename.toStdString(),IMREAD_GRAYSCALE));
-        int pr=detector.predict(img);
+        Mat img=getCentral64x128Image(imread(filename.toStdString()));
+        int pr=detector->predict(img);
         res+=(pr==1);
         m_dbg<<"pos "<<pr;
         mtx->lock();
@@ -29,8 +29,8 @@ void test_thread(detectorTestDialog *dialog, MyPersonDetector detector,QStringLi
 
         int res=0;
         int cnt=0;
-        Mat img=getCentral64x128Image( imread(filename.toStdString(),IMREAD_GRAYSCALE));
-        int pr=detector.predict(img);
+        Mat img=getCentral64x128Image( imread(filename.toStdString()));
+        int pr=detector->predict(img);
         res+=(pr==-1);
         m_dbg<<"neg "<<pr;
         mtx->lock();
@@ -44,7 +44,7 @@ int getDataSize(QStringList posData,QStringList negData){
     return posData.size()+negData.size();
     int res=0;
     for (auto filename:negData){
-        Mat img=imread(filename.toStdString(),IMREAD_GRAYSCALE);
+        Mat img=imread(filename.toStdString());
 
         auto slidingWindow=applySlidingWindow(img);
         for (auto subimg:slidingWindow){
@@ -52,7 +52,7 @@ int getDataSize(QStringList posData,QStringList negData){
         }
     }
     for (auto filename:posData){
-        Mat img=imread(filename.toStdString(),IMREAD_GRAYSCALE);
+        Mat img=imread(filename.toStdString());
 
         auto slidingWindow=applySlidingWindow(img);
         for (auto subimg:slidingWindow){
@@ -61,7 +61,7 @@ int getDataSize(QStringList posData,QStringList negData){
     }
     return res;
 }
-detectorTestDialog::detectorTestDialog(QWidget *parent,MyPersonDetector detector,QStringList posData,QStringList negData) :
+detectorTestDialog::detectorTestDialog(QWidget *parent,MyPersonDetector *detector,QStringList posData,QStringList negData) :
     detectorTestDialog(parent)
 {
     terminated=false;
@@ -75,12 +75,13 @@ detectorTestDialog::detectorTestDialog(QWidget *parent,MyPersonDetector detector
     int nst=0,nsz=negData.size()/numOfThreads+1;
     for (int t=0;t<numOfThreads;++t){
         QStringList pos;
-        int en;
+        int en=pst;
         for (int i=pst;i<pst+psz&&i<posData.size();++i){
             pos+=posData[i];
             en=i+1;
         }
         pst=en;
+        en=nst;
         QStringList neg;
         for (int i=nst;i<nst+nsz&&i<negData.size();++i){
             neg+=negData[i];
@@ -94,7 +95,6 @@ detectorTestDialog::detectorTestDialog(QWidget *parent,MyPersonDetector detector
 }
 void detectorTestDialog::updateProgress(int correct,int all){
     totalCorrect+=correct;total+=all;
-    m_dbg<<totalCorrect<<total;
     ui->label->setText(QString("%1 correct out of %2 , Accuracy = %3\%").arg(totalCorrect).arg(total).arg(100.0*totalCorrect/total));
     progressChanged(total);
 

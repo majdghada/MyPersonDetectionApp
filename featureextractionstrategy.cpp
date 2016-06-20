@@ -4,8 +4,9 @@
 #include <vector>
 #include <opencv2/objdetect.hpp>
 using namespace std;
-Mat DSIFT::getFeatures(Mat img){
+Mat SIFT::getFeatures(Mat img){
     resize(img,img,Size(64,128));
+    cvtColor( img, img, COLOR_BGR2GRAY );
     Ptr<xfeatures2d::SIFT> sift = xfeatures2d::SIFT::create();
     Ptr<xfeatures2d::SIFT> sift1 = xfeatures2d::SIFT::create(4);
     vector <KeyPoint> kps1;
@@ -39,18 +40,29 @@ Mat DSIFT::getFeatures(Mat img){
             else {
                 res.push_back(centers.t());
             }
-
         }
     }
     return res.t();
 }
+
+std::string SIFT::strategyName()
+{
+    return "SIFT";
+}
 Mat HOG::getFeatures(Mat img){
+
+    resize(img,img,Size(64,128));
     HOGDescriptor hog;
     hog.winSize = Size(64,128);
     Mat gray;
     vector< Point > location;
     vector< float > descriptors;
-    cvtColor( *img, gray, COLOR_BGR2GRAY );
+    cvtColor( img, gray, COLOR_BGR2GRAY );
     hog.compute( gray, descriptors, Size( 8, 8 ), Size( 0, 0 ), location );
-    return Mat( descriptors ).clone() ;
+    return Mat( descriptors ).clone().t() ;
+}
+
+std::string HOG::strategyName()
+{
+    return "HOG";
 }

@@ -32,6 +32,6 @@ DetectionWindow getCentral64x128Window(const Mat & img);
     \a heigtwidthratio : the ratio (heigt / width) of each window
 
 */
-std::vector<DetectionWindow> applySlidingWindow(const Mat &img,int minwidth=64,int minheight=128,int stride=8,float scaleRatio=1.2,float heightwidthratio=2,int maxLevels=13);
+std::vector<DetectionWindow> applySlidingWindow(const Mat &img,int minwidth=64,int minheight=128,int stride=8,float scaleRatio=1.02,float heightwidthratio=2,int maxLevels=13);
 
 #endif // DETECTIONWINDOW_H

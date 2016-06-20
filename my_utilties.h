@@ -22,7 +22,10 @@ public :
     T getValue(int index);
     int getIndex(T value);
     T getSelectedValue();
+    int getSelectedIndex();
     QString getName(T value);
+    void setSelectedIndex(int index);
+
 };
 template <class T>
 void MyComboBox<T>::setComboBox(QComboBox *comboBox)
@@ -61,6 +64,17 @@ template <class T>
 QString MyComboBox<T>::getName(T value)
 {
     return names[value];
+}
+
+template <class T>
+int MyComboBox<T>::getSelectedIndex()
+{
+    return comboBox->currentIndex();
+}
+template <class T>
+void MyComboBox<T>::setSelectedIndex(int index)
+{
+    comboBox->setCurrentIndex(index);
 }
 
 #define m_dbg qDebug()<<QTime::currentTime().toString("hh:mm:ss.zzz a :")<< myTimer.elapsed()<<":"

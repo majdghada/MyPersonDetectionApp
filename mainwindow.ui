@@ -115,6 +115,16 @@
         </property>
        </widget>
       </item>
+      <item row="2" column="1" colspan="5">
+       <widget class="QComboBox" name="FeaturesTypeCombo"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Features Type</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
@@ -149,8 +159,8 @@
    <slot>addPos()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>22</x>
-     <y>73</y>
+     <x>32</x>
+     <y>72</y>
     </hint>
     <hint type="destinationlabel">
      <x>7</x>
@@ -213,8 +223,8 @@
    <slot>setSVMParams()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>20</x>
-     <y>130</y>
+     <x>30</x>
+     <y>168</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -229,8 +239,8 @@
    <slot>train()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>21</x>
-     <y>174</y>
+     <x>31</x>
+     <y>200</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -245,8 +255,8 @@
    <slot>test()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>28</x>
-     <y>204</y>
+     <x>38</x>
+     <y>232</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -261,8 +271,8 @@
    <slot>crossValidate()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>62</x>
-     <y>238</y>
+     <x>72</x>
+     <y>264</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -277,8 +287,8 @@
    <slot>saveSVM()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>21</x>
-     <y>273</y>
+     <x>31</x>
+     <y>296</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -334,6 +344,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>FeaturesTypeCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFeaturesType(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>504</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>526</x>
+     <y>125</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>addPos()</slot>
@@ -348,5 +374,6 @@
   <slot>loadSVM()</slot>
   <slot>detectSingleWindow()</slot>
   <slot>detectSlidingWindow()</slot>
+  <slot>setFeaturesType(int)</slot>
  </slots>
 </ui>

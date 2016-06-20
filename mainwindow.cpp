@@ -15,6 +15,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    FeatureType.setComboBox(ui->FeaturesTypeCombo);
+    FeatureType.add_item("SIFT Scale Invariant Feature Transform",new SIFT());
+    FeatureType.add_item("HOG Histogram of Oriented Gradients",new HOG());
+
     updateLabels();
 }
 
@@ -80,7 +84,7 @@ void MainWindow::train()
 
 void MainWindow::test()
 {
-    detectorTestDialog dia(this,detector,posData,negData);
+    detectorTestDialog dia(this,&detector,posData,negData);
     dia.exec();
 }
 
@@ -113,7 +117,12 @@ void MainWindow::saveSVM()
     if (dialog.exec()){
         filenames=dialog.selectedFiles();
         detector.saveSVM(filenames[0].toStdString());
-        QMessageBox dia(QMessageBox::Information, "info", "detector loaded", QMessageBox::Ok, this);
+        QFile typeFile(QString("%1.type").arg(filenames[0]));
+        typeFile.open(QIODevice::ReadWrite);
+        QTextStream typeStream(&typeFile);
+        typeStream<<FeatureType.getSelectedIndex();
+        typeFile.close();
+        QMessageBox dia(QMessageBox::Information, "info", "SVM saved", QMessageBox::Ok, this);
         dia.exec();
     }
 }
@@ -128,7 +137,12 @@ void MainWindow::loadSVM()
         filenames=dialog.selectedFiles();
         detector.loadSVM(filenames[0].toStdString());
         svmParameters=detector.getParameters();
-        QMessageBox dia(QMessageBox::Information, "info", "detector loaded", QMessageBox::Ok, this);
+        QFile typeFile(QString("%1.type").arg(filenames[0]));
+        typeFile.open(QIODevice::ReadOnly);
+        QTextStream typeStream(&typeFile);
+        FeatureType.setSelectedIndex((typeStream.readAll().toInt()));
+        typeFile.close();
+        QMessageBox dia(QMessageBox::Information, "info", "SVM loaded", QMessageBox::Ok, this);
         dia.exec();
 
     }
@@ -157,8 +171,8 @@ void MainWindow::detectSlidingWindow()
         QStringList filenames;
         if (dialog.exec()){
             filenames=dialog.selectedFiles();
-            Mat img=imread(filenames[0].toStdString(),IMREAD_GRAYSCALE);
-            double div=max(img.rows/300.0,img.cols/300.0);
+            Mat img=imread(filenames[0].toStdString());
+            double div=1;max(img.rows/300.0,img.cols/300.0);
             cv::resize(img,img,cv::Size(img.cols/div,img.rows/div));
 
 
@@ -181,4 +195,8 @@ void MainWindow::detectSlidingWindow()
             }
             imshow("detectMultiScale",dispImg);
         }
+}
+void MainWindow::setFeaturesType(int index){
+    m_dbg<<"selected "<<index;
+    detector.setFeatureExtractionStrategy(FeatureType.getValue(index));
 }

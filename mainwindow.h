@@ -1,6 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
+#include <QMap>
 #include <QMainWindow>
 #include "svmparameters.h"
 #include "mypersondetector.h"
@@ -24,6 +24,7 @@ private:
     SVMParameters svmParameters;
     MyPersonDetector detector;
     void updateLabels();
+    MyComboBox<FeatureExtractionStrategy * > FeatureType;
 public slots:
     void addPos();
     void addNeg();
@@ -43,5 +44,6 @@ public slots:
     void detectSingleWindow();
     void detectSlidingWindow();
 
+    void setFeaturesType(int index);
 };
 #endif // MAINWINDOW_H

@@ -4,6 +4,7 @@
 #include "mysvm.h"
 #include "svmparameters.h"
 #include "dataloader.h"
+#include "featureextractionstrategy.h"
 #include <QDir>
 class DataLoader;
 class MyPersonDetector
@@ -17,12 +18,13 @@ protected:
     SVMParameters parameters;
     DataLoader * dataLoader;
     void InitSVMTrainingData();
-
+    FeatureExtractionStrategy * fxs;
 public:
     MyPersonDetector();
     void setdata(QStringList pos,QStringList neg);
     void loadSVM(std::string path);
     void saveSVM(std::string path);
+    void setFeatureExtractionStrategy(FeatureExtractionStrategy * fxs);
     virtual void train();
     void autoTrain();
     int test();
