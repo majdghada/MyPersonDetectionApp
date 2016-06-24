@@ -26,6 +26,11 @@ private:
     void getFromUI();
     void initUI();
     MyComboBox<int> kernelComboBox;
+    MyComboBox<int> typeComboBox;
+
+    bool reqCondition(int param);
+public slots:
+    void updateReqLabels(int index=0);
 };
 
 #endif // SVMPARAMETERSDIALOG_H

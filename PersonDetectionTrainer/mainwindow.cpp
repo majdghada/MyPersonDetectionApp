@@ -8,7 +8,8 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/objdetect.hpp>
-
+#include "detectmultiscalebatchdialog.h"
+#include <QtDebug>
 using namespace cv;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -157,7 +158,7 @@ void MainWindow::detectSingleWindow()
         filenames=dialog.selectedFiles();
         float pr=detector.predict(imread(filenames[0].toStdString()));
         imshow(filenames[0].toStdString(),imread(filenames[0].toStdString()));
-        QMessageBox dia(QMessageBox::Information, "info", QString("%1").arg(pr), QMessageBox::Ok, this);
+        QMessageBox dia(QMessageBox::Information, "info", QString("%1").arg(isPositiveClass(pr)?"positive":"negative"), QMessageBox::Ok, this);
         dia.exec();
     }
 
@@ -172,22 +173,26 @@ void MainWindow::detectSlidingWindow()
         if (dialog.exec()){
             filenames=dialog.selectedFiles();
             Mat img=imread(filenames[0].toStdString());
-            double div=1;max(img.rows/300.0,img.cols/300.0);
+            double div=1;//max(img.rows/300.0,img.cols/300.0);
             cv::resize(img,img,cv::Size(img.cols/div,img.rows/div));
 
 
-            vector<Rect> boxes=detector.detectMultiScale(img);
-            m_dbg<<"before grouping "<<boxes.size();
-            groupRectangles(boxes,0);
-            m_dbg<<"after grouping "<<boxes.size();
+            vector<DetectionWindow> boxes=detector.detectMultiScale(img);
+            vector<Rect> rects;
+            for (DetectionWindow box:boxes){
+                rects.push_back(box.getROI());
+            }
+            m_dbg<<"before grouping "<<rects.size();
+            groupRectangles(rects,0);
+            m_dbg<<"after grouping "<<rects.size();
     //        imshow(filenames[0].toStdString(),imread(filenames[0].toStdString()));
             QMessageBox dia(QMessageBox::Information, "info", QString("%1").arg(boxes.size()), QMessageBox::Ok, this);
             dia.exec();
             Mat dispImg=imread(filenames[0].toStdString());
 
             cv::resize(dispImg,dispImg,cv::Size(dispImg.cols/div,dispImg.rows/div));
-            for (auto box:boxes){
-                cv::Mat roi = dispImg(box);
+            for (Rect rect:rects){
+                cv::Mat roi = dispImg(rect);
                 cv::Mat color(roi.size(), CV_8UC3, cv::Scalar(0, 255,0));
                 double alpha = 0.01;
                 cv::addWeighted(color, alpha, roi, 1.0 - alpha , 0.0, roi);
@@ -199,4 +204,17 @@ void MainWindow::detectSlidingWindow()
 void MainWindow::setFeaturesType(int index){
     m_dbg<<"selected "<<index;
     detector.setFeatureExtractionStrategy(FeatureType.getValue(index));
+}
+void MainWindow::detectSlidingWindowBatch(){
+    QStringList selected;
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+    dialog.setDirectory(QDir("/home/majd/Downloads/inr/INRIAPerson/"));
+    if (dialog.exec()){
+        selected=dialog.selectedFiles();
+        DetectMultiScaleBatchDialog dia(this,selected,&detector);
+        dia.exec();
+    }
+
+
 }

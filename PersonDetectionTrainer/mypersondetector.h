@@ -32,11 +32,11 @@ public:
     void setDataLoader(DataLoader *loader);
     SVMParameters &getParameters();
     void setParameters(const SVMParameters &value);
-    std::vector<Rect> detectMultiScale(Mat img);
+    std::vector<DetectionWindow> detectMultiScale(Mat img);
 };
 
 class AugmentedPersonDetector:public MyPersonDetector{
-
+public :
     void train();
 
 };
