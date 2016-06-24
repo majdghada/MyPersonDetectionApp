@@ -11,27 +11,26 @@ detectorTestDialog::detectorTestDialog(QWidget *parent) :
     ui->setupUi(this);
 }
 void test_thread(detectorTestDialog *dialog, MyPersonDetector *detector,QStringList posData,QStringList negData,Mutex * mtx){
-    for (auto filename:posData){
+    for (QString filename:posData){
         int res=0;
         int cnt=0;
+
         Mat img=getCentral64x128Image(imread(filename.toStdString()));
-        int pr=detector->predict(img);
-        res+=(pr==1);
+        double pr=detector->predict(img);
+        res+=isPositiveClass(pr);
         m_dbg<<"pos "<<pr;
         mtx->lock();
         dialog->updateProgress(res,++cnt);
         mtx->unlock();
         if (dialog->getTerminated())return;
-
-
     }
-    for (auto filename:negData){
+    for (QString filename:negData){
 
         int res=0;
         int cnt=0;
         Mat img=getCentral64x128Image( imread(filename.toStdString()));
-        int pr=detector->predict(img);
-        res+=(pr==-1);
+        double pr=detector->predict(img);
+        res+=isNegativeClass(pr);
         m_dbg<<"neg "<<pr;
         mtx->lock();
         dialog->updateProgress(res,++cnt);
@@ -43,19 +42,19 @@ void test_thread(detectorTestDialog *dialog, MyPersonDetector *detector,QStringL
 int getDataSize(QStringList posData,QStringList negData){
     return posData.size()+negData.size();
     int res=0;
-    for (auto filename:negData){
+    for (QString filename:negData){
         Mat img=imread(filename.toStdString());
 
-        auto slidingWindow=applySlidingWindow(img);
-        for (auto subimg:slidingWindow){
+        vector<DetectionWindow> slidingWindow=applySlidingWindow(img);
+        for (DetectionWindow subimg:slidingWindow){
             res++;
         }
     }
-    for (auto filename:posData){
+    for (QString filename:posData){
         Mat img=imread(filename.toStdString());
 
-        auto slidingWindow=applySlidingWindow(img);
-        for (auto subimg:slidingWindow){
+        vector<DetectionWindow> slidingWindow=applySlidingWindow(img);
+        for (DetectionWindow subimg:slidingWindow){
             res++;
         }
     }

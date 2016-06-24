@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4):QT += widgets
 
 TARGET = MyPersonDetectionTrainer
 TEMPLATE = app
@@ -22,7 +22,10 @@ SOURCES += main.cpp\
     detectionwindow.cpp \
     dataloader.cpp \
     detectortestdialog.cpp \
-    featureextractionstrategy.cpp
+    featureextractionstrategy.cpp \
+    detectmultiscalebatchdialog.cpp \
+    imagewidget.cpp \
+    scalableimagewidget.cpp
 
 HEADERS  += mainwindow.h \
     svmparametersdialog.h \
@@ -33,16 +36,20 @@ HEADERS  += mainwindow.h \
     detectionwindow.h \
     dataloader.h \
     detectortestdialog.h \
-    featureextractionstrategy.h
+    featureextractionstrategy.h \
+    detectmultiscalebatchdialog.h \
+    imagewidget.h \
+    scalableimagewidget.h
 
 FORMS    += mainwindow.ui \
     svmparametersdialog.ui \
-    detectortestdialog.ui
+    detectortestdialog.ui \
+    detectmultiscalebatchdialog.ui \
+    scalableimagewidget.ui
 
 CONFIG += c++11
 
 LIBS += -L/usr/local/lib \
-        -L/usr/lib/x86_64-linux-gnu \
         -lopencv_core \
         -lopencv_imgcodecs \
         -lopencv_highgui \

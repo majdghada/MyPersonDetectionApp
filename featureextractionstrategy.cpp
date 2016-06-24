@@ -1,8 +1,11 @@
 #include "featureextractionstrategy.h"
+#include "mypersondetector.h"
+#include "my_utilties.h"
 #include <opencv2/xfeatures2d.hpp>
 #include <opencv2/imgproc.hpp>
 #include <vector>
 #include <opencv2/objdetect.hpp>
+#include <thread>
 using namespace std;
 Mat SIFT::getFeatures(Mat img){
     resize(img,img,Size(64,128));
@@ -66,3 +69,4 @@ std::string HOG::strategyName()
 {
     return "HOG";
 }
+

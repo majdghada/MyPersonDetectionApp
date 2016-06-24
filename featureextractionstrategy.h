@@ -1,6 +1,8 @@
 #ifndef FEATUREEXTRACTIONSTRATEGY_H
 #define FEATUREEXTRACTIONSTRATEGY_H
 #include <opencv2/core.hpp>
+#include <vector>
+#include "detectionwindow.h"
 using namespace cv;
 
 class FeatureExtractionStrategy

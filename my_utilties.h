@@ -2,12 +2,15 @@
 #define MY_UTILTIES_H
 #include <map>
 #include <QComboBox>
+#include <QTime>
+#include <iostream>
 #include <QtGlobal>
 #include <QtDebug>
-#include <QTime>
-
 using namespace std;
 extern QTime myTimer;
+bool isPositiveClass(double weight);
+bool isNegativeClass(double weight);
+
 
 template <class T>
 class MyComboBox{

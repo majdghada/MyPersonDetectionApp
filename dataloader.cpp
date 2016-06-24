@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "detectionwindow.h"
 #include <opencv2/imgproc/imgproc.hpp>
+#include <thread>
 DataLoader::DataLoader()
 {
 
@@ -52,6 +53,17 @@ bool AugmentedDataLoader::hasNext()
     return imageIdx<(int)pos->size()+(int)neg->size()+(int)hardExamples.size()||windowInImageidx<negWindows;
 }
 
+void hardExamplesthread(MyPersonDetector * originalDetector,vector<DetectionWindow> * subWindows,vector<DetectionWindow> * hardExamples,int st,int en, Mutex *mtx){
+    for (int i=st;i<en;++i){
+        DetectionWindow & window=(*subWindows)[i];
+        if (isPositiveClass(originalDetector->predict(window.getImageWindow()))){
+            mtx->lock();
+            hardExamples->push_back(window);
+            mtx->unlock();
+        }
+    }
+}
+
 pair<Mat, int> AugmentedDataLoader::next()
 {
     Mat img;
@@ -68,18 +80,23 @@ pair<Mat, int> AugmentedDataLoader::next()
             Mat fullImg=(*neg)[imageIdx-(int)pos->size()];
             subWindows=applySlidingWindow(fullImg);
             m_dbg<<subWindows.size()<< " subwindows found by sliding window";
-            for (DetectionWindow window:subWindows){
-//                if (hardExamples.size()>=1000)break;
-                if (originalDetector->predict(window.getImageWindow())==1){
-                    hardExamples.push_back(window);
-                    m_dbg<<hardExamples.size()<<" hard examples found , up to the "<<imageIdx<<"th image";
-                    m_dbg<<window.getFullImage().rows<<" "<<window.getFullImage().cols;
-                    m_dbg<<hardExamples.back().getFullImage().rows<<" "<<hardExamples.back().getFullImage().cols;
-                    m_dbg<<window.getImageWindow().rows<<" "<<window.getImageWindow().cols;
-                    m_dbg<<hardExamples.back().getImageWindow().rows<<" "<<hardExamples.back().getImageWindow().cols;
-
-                }
+            int sz=subWindows.size()/8;
+            std::thread * threads[8];
+            Mutex  mtx;
+            for (int i=0;i<8;++i){
+                threads[i]=new std::thread(hardExamplesthread,originalDetector,&subWindows,&hardExamples,sz*i,(i==7)?subWindows.size():sz*(i+1),&mtx);
             }
+            for (int i=0;i<8;++i){
+                threads[i]->join();
+                delete threads[i];
+            }
+//            for (DetectionWindow window:subWindows){
+////                if (hardExamples.size()>=1000)break;
+//                if (isPositiveClass(originalDetector->predict(window.getImageWindow()))){
+//                    hardExamples.push_back(window);
+//                }
+//            }
+            m_dbg<<hardExamples.size()<<" hard examples found , up to the "<<imageIdx<<"th image";
             distribution=uniform_int_distribution<int>(0,subWindows.size()-1);
             windowInImageidx=0;
             imageIdx++;
@@ -89,7 +106,8 @@ pair<Mat, int> AugmentedDataLoader::next()
         lbl=-1;
     }
     else {
-        if (hardExamples.size()>1000){
+
+        if (hardExamples.size()>10000){
             reduceHardExamplesSize();
         }
         try{
@@ -115,7 +133,7 @@ pair<Mat, int> AugmentedDataLoader::next()
 void AugmentedDataLoader::reduceHardExamplesSize(){
     vector<DetectionWindow> res;
     distribution=uniform_int_distribution<int>(0,hardExamples.size()-1);
-    for (int i=0;i<1000;++i){
+    for (int i=0;i<10000;++i){
         res.push_back(hardExamples[distribution(generator)]);
     }
     hardExamples=res;
