@@ -1,23 +1,23 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef TRAINERMAINWINDOW_H
+#define TRAINERMAINWINDOW_H
 #include <QMainWindow>
 #include "svmparameters.h"
 #include "mypersondetector.h"
 #include "my_utilties.h"
-namespace Ui {
-class MainWindow;
-}
 
-class MainWindow : public QMainWindow
+namespace Ui {
+class TrainerMainWindow;
+}
+class TrainerMainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    explicit TrainerMainWindow(QWidget *parent = 0);
+    ~TrainerMainWindow();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::TrainerMainWindow *ui;
     QStringList posData;
     QStringList negData;
     SVMParameters svmParameters;
@@ -47,4 +47,4 @@ public slots:
     void setFeaturesType(int index);
     void detectSlidingWindowBatch();
 };
-#endif // MAINWINDOW_H
+#endif // TRAINERMAINWINDOW_H

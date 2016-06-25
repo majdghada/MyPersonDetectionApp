@@ -1,5 +1,5 @@
 #include "dataloader.h"
-#include "mainwindow.h"
+#include "trainermainwindow.h"
 #include "detectionwindow.h"
 #include <opencv2/imgproc/imgproc.hpp>
 #include <thread>

@@ -10,7 +10,7 @@ using namespace std;
 extern QTime myTimer;
 bool isPositiveClass(double weight);
 bool isNegativeClass(double weight);
-
+void setAppTheme(QApplication * a);
 
 template <class T>
 class MyComboBox{

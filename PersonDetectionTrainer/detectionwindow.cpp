@@ -1,5 +1,5 @@
 #include "detectionwindow.h"
-#include "mainwindow.h"
+#include "trainermainwindow.h"
 using namespace std;
 DetectionWindow::DetectionWindow(const Mat & image,const Rect &roi){
     this->image=image;

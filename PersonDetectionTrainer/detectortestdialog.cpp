@@ -2,7 +2,7 @@
 #include "ui_detectortestdialog.h"
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
-#include "mainwindow.h"
+#include "trainermainwindow.h"
 #include "detectionwindow.h"
 detectorTestDialog::detectorTestDialog(QWidget *parent) :
     QDialog(parent),
