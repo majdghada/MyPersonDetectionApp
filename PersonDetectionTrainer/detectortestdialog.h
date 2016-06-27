@@ -1,6 +1,6 @@
 #ifndef DETECTORTESTDIALOG_H
 #define DETECTORTESTDIALOG_H
-#include <mypersondetector.h>
+#include "mypersondetector.h"
 #include <QDialog>
 #include <thread>
 namespace Ui {

@@ -6,14 +6,13 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4):QT += widgets
 
-TARGET = MyPersonDetectionTrainer
+TARGET = PersonDetectionTrainer
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
     svmparametersdialog.cpp \
     svmparameters.cpp \
     mysvm.cpp \
@@ -22,9 +21,13 @@ SOURCES += main.cpp\
     detectionwindow.cpp \
     dataloader.cpp \
     detectortestdialog.cpp \
-    featureextractionstrategy.cpp
+    featureextractionstrategy.cpp \
+    detectmultiscalebatchdialog.cpp \
+    imagewidget.cpp \
+    scalableimagewidget.cpp \
+    trainermainwindow.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     svmparametersdialog.h \
     svmparameters.h \
     mysvm.h \
@@ -33,16 +36,22 @@ HEADERS  += mainwindow.h \
     detectionwindow.h \
     dataloader.h \
     detectortestdialog.h \
-    featureextractionstrategy.h
+    featureextractionstrategy.h \
+    detectmultiscalebatchdialog.h \
+    imagewidget.h \
+    scalableimagewidget.h \
+    trainermainwindow.h
 
-FORMS    += mainwindow.ui \
+FORMS    += \
     svmparametersdialog.ui \
-    detectortestdialog.ui
+    detectortestdialog.ui \
+    detectmultiscalebatchdialog.ui \
+    scalableimagewidget.ui \
+    trainermainwindow.ui
 
 CONFIG += c++11
 
 LIBS += -L/usr/local/lib \
-        -L/usr/lib/x86_64-linux-gnu \
         -lopencv_core \
         -lopencv_imgcodecs \
         -lopencv_highgui \
@@ -54,3 +63,4 @@ LIBS += -L/usr/local/lib \
         -lopencv_nonfree \
         -lopencv_xfeatures2d \
         -lopencv_ml
+

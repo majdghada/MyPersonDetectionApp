@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DetectMultiScaleBatchDialog</class>
+ <widget class="QDialog" name="DetectMultiScaleBatchDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>478</width>
+    <height>399</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="5">
+    <widget class="QPushButton" name="pushButton_3">
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="0">
+    <spacer name="horizontalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="1">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="pushButton_2">
+     <property name="text">
+      <string>Back</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="6">
+    <widget class="ScalableImageWidget" name="widget" native="true"/>
+   </item>
+   <item row="1" column="3">
+    <widget class="QPushButton" name="pushButton">
+     <property name="text">
+      <string>Next</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ScalableImageWidget</class>
+   <extends>QWidget</extends>
+   <header>scalableimagewidget.h</header>
+   <container>1</container>
+   <slots>
+    <signal>mouseEntered()</signal>
+    <signal>mouseLeft()</signal>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>widget</sender>
+   <signal>mouseEntered()</signal>
+   <receiver>DetectMultiScaleBatchDialog</receiver>
+   <slot>showOriginal()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>594</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>642</x>
+     <y>70</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>mouseLeft()</signal>
+   <receiver>DetectMultiScaleBatchDialog</receiver>
+   <slot>showHighlighted()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>459</x>
+     <y>124</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>640</x>
+     <y>122</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>DetectMultiScaleBatchDialog</receiver>
+   <slot>PreviousImage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>337</x>
+     <y>548</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>82</x>
+     <y>279</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>DetectMultiScaleBatchDialog</receiver>
+   <slot>Close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>634</x>
+     <y>548</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>396</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DetectMultiScaleBatchDialog</receiver>
+   <slot>NextImage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>423</x>
+     <y>548</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>266</x>
+     <y>282</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>NextImage()</slot>
+  <slot>PreviousImage()</slot>
+  <slot>Close()</slot>
+  <slot>showOriginal()</slot>
+  <slot>showHighlighted()</slot>
+ </slots>
+</ui>

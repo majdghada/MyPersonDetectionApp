@@ -1,5 +1,5 @@
 #include "detectionwindow.h"
-#include "mainwindow.h"
+#include "trainermainwindow.h"
 using namespace std;
 DetectionWindow::DetectionWindow(const Mat & image,const Rect &roi){
     this->image=image;
@@ -57,6 +57,7 @@ Mat DetectionWindow::getImageWindow(){
 Mat DetectionWindow::getFullImage(){
     return image;
 }
+
 Rect DetectionWindow::getROI(){
     return roi;
 }
@@ -67,16 +68,14 @@ Rect DetectionWindow::getROI(){
 std::vector<DetectionWindow> applySlidingWindow(const Mat &img,int minwidth,int minheight,int stride,float scaleRatio,float heightwidthratio,int maxLevels)
 {
     vector<DetectionWindow> res;
-    scaleRatio=img.cols/(double)minheight;
-    for (int i=0;i<4;++i)scaleRatio=sqrt(scaleRatio);
+    scaleRatio=max(img.rows/(double)minheight,img.cols/(double)minwidth);
+    for (int i=0;i<3;++i)scaleRatio=sqrt(scaleRatio);
     m_dbg<<"scaleRatio"<<scaleRatio;
     int level=0;
-
     for (float scale=1.0;level<maxLevels;scale*=scaleRatio,level++){
         int cols=img.cols/scale;
         int rows=cols*heightwidthratio;
         m_dbg<<"rows"<<rows<<"cols"<<cols;
-
         if (rows<minheight||cols<minwidth)break;
         int rowShift=((img.rows-rows)%stride)/2;
         int colShift=((img.cols-cols)%stride)/2;

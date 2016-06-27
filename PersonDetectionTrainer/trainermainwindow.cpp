@@ -1,5 +1,5 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "trainermainwindow.h"
+#include "ui_trainermainwindow.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include "svmparametersdialog.h"
@@ -8,11 +8,12 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/objdetect.hpp>
-
+#include "detectmultiscalebatchdialog.h"
+#include <QtDebug>
 using namespace cv;
-MainWindow::MainWindow(QWidget *parent) :
+TrainerMainWindow::TrainerMainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::TrainerMainWindow)
 {
     ui->setupUi(this);
     FeatureType.setComboBox(ui->FeaturesTypeCombo);
@@ -22,16 +23,16 @@ MainWindow::MainWindow(QWidget *parent) :
     updateLabels();
 }
 
-MainWindow::~MainWindow()
+TrainerMainWindow::~TrainerMainWindow()
 {
     delete ui;
 }
-void MainWindow::updateLabels(){
+void TrainerMainWindow::updateLabels(){
     ui->PosLabel->setText(QString("%1 pos selected").arg(posData.size()));
     ui->NegLabel->setText(QString("%1 neg selected").arg(negData.size()));
 }
 
-void MainWindow::addPos()
+void TrainerMainWindow::addPos()
 {
     QFileDialog dialog(this);
     dialog.setFileMode(QFileDialog::ExistingFiles);
@@ -42,7 +43,7 @@ void MainWindow::addPos()
     updateLabels();
 }
 
-void MainWindow::addNeg()
+void TrainerMainWindow::addNeg()
 {
     QFileDialog dialog(this);
     dialog.setFileMode(QFileDialog::ExistingFiles);
@@ -53,19 +54,19 @@ void MainWindow::addNeg()
     updateLabels();
 }
 
-void MainWindow::clearPos()
+void TrainerMainWindow::clearPos()
 {
     posData.clear();
     updateLabels();
 }
 
-void MainWindow::clearNeg()
+void TrainerMainWindow::clearNeg()
 {
     negData.clear();
     updateLabels();
 }
 
-void MainWindow::setSVMParams()
+void TrainerMainWindow::setSVMParams()
 {
     SVMParametersDialog dialog(this,svmParameters);
     if (dialog.exec()){
@@ -73,7 +74,7 @@ void MainWindow::setSVMParams()
     }
 }
 
-void MainWindow::train()
+void TrainerMainWindow::train()
 {
     detector.setParameters(svmParameters);
     detector.setdata(posData,negData);
@@ -82,13 +83,13 @@ void MainWindow::train()
     dia.exec();
 }
 
-void MainWindow::test()
+void TrainerMainWindow::test()
 {
     detectorTestDialog dia(this,&detector,posData,negData);
     dia.exec();
 }
 
-void MainWindow::crossValidate()
+void TrainerMainWindow::crossValidate()
 {
     QStringList wholepos,wholeneg,trainpos,testpos,trainneg,testneg;
        wholepos=posData;wholeneg=negData;
@@ -108,7 +109,7 @@ void MainWindow::crossValidate()
        posData=wholepos;negData=wholeneg;
 }
 
-void MainWindow::saveSVM()
+void TrainerMainWindow::saveSVM()
 {
     QFileDialog dialog(this);
     dialog.setFileMode(QFileDialog::AnyFile);
@@ -127,7 +128,7 @@ void MainWindow::saveSVM()
     }
 }
 
-void MainWindow::loadSVM()
+void TrainerMainWindow::loadSVM()
 {
     QFileDialog dialog(this);
     dialog.setFileMode(QFileDialog::ExistingFile);
@@ -148,7 +149,7 @@ void MainWindow::loadSVM()
     }
 }
 
-void MainWindow::detectSingleWindow()
+void TrainerMainWindow::detectSingleWindow()
 {
     QFileDialog dialog(this);
     dialog.setFileMode(QFileDialog::ExistingFile);
@@ -157,13 +158,13 @@ void MainWindow::detectSingleWindow()
         filenames=dialog.selectedFiles();
         float pr=detector.predict(imread(filenames[0].toStdString()));
         imshow(filenames[0].toStdString(),imread(filenames[0].toStdString()));
-        QMessageBox dia(QMessageBox::Information, "info", QString("%1").arg(pr), QMessageBox::Ok, this);
+        QMessageBox dia(QMessageBox::Information, "info", QString("%1").arg(isPositiveClass(pr)?"positive":"negative"), QMessageBox::Ok, this);
         dia.exec();
     }
 
 }
 
-void MainWindow::detectSlidingWindow()
+void TrainerMainWindow::detectSlidingWindow()
 {
     QFileDialog dialog(this);
         dialog.setDirectory("/home/majd/Downloads/inr/INRIAPerson/");
@@ -172,22 +173,26 @@ void MainWindow::detectSlidingWindow()
         if (dialog.exec()){
             filenames=dialog.selectedFiles();
             Mat img=imread(filenames[0].toStdString());
-            double div=1;max(img.rows/300.0,img.cols/300.0);
+            double div=1;//max(img.rows/300.0,img.cols/300.0);
             cv::resize(img,img,cv::Size(img.cols/div,img.rows/div));
 
 
-            vector<Rect> boxes=detector.detectMultiScale(img);
-            m_dbg<<"before grouping "<<boxes.size();
-            groupRectangles(boxes,0);
-            m_dbg<<"after grouping "<<boxes.size();
+            vector<DetectionWindow> boxes=detector.detectMultiScale(img);
+            vector<Rect> rects;
+            for (DetectionWindow box:boxes){
+                rects.push_back(box.getROI());
+            }
+            m_dbg<<"before grouping "<<rects.size();
+            groupRectangles(rects,0);
+            m_dbg<<"after grouping "<<rects.size();
     //        imshow(filenames[0].toStdString(),imread(filenames[0].toStdString()));
             QMessageBox dia(QMessageBox::Information, "info", QString("%1").arg(boxes.size()), QMessageBox::Ok, this);
             dia.exec();
             Mat dispImg=imread(filenames[0].toStdString());
 
             cv::resize(dispImg,dispImg,cv::Size(dispImg.cols/div,dispImg.rows/div));
-            for (auto box:boxes){
-                cv::Mat roi = dispImg(box);
+            for (Rect rect:rects){
+                cv::Mat roi = dispImg(rect);
                 cv::Mat color(roi.size(), CV_8UC3, cv::Scalar(0, 255,0));
                 double alpha = 0.01;
                 cv::addWeighted(color, alpha, roi, 1.0 - alpha , 0.0, roi);
@@ -196,7 +201,20 @@ void MainWindow::detectSlidingWindow()
             imshow("detectMultiScale",dispImg);
         }
 }
-void MainWindow::setFeaturesType(int index){
+void TrainerMainWindow::setFeaturesType(int index){
     m_dbg<<"selected "<<index;
     detector.setFeatureExtractionStrategy(FeatureType.getValue(index));
+}
+void TrainerMainWindow::detectSlidingWindowBatch(){
+    QStringList selected;
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+    dialog.setDirectory(QDir("/home/majd/Downloads/inr/INRIAPerson/"));
+    if (dialog.exec()){
+        selected=dialog.selectedFiles();
+        DetectMultiScaleBatchDialog dia(this,selected,&detector);
+        dia.exec();
+    }
+
+
 }

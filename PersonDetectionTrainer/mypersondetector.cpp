@@ -4,7 +4,7 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/opencv.hpp>
-#include "mainwindow.h"
+#include "trainermainwindow.h"
 #include "detectionwindow.h"
 #include <QtDebug>
 #include <thread>
@@ -40,7 +40,7 @@ void MyPersonDetector::setdata(QStringList pos, QStringList neg)
     }
     m_dbg<<"finished loading positive";
     filenames=&negData;
-    for (auto filename:*filenames){
+    for (QString filename:*filenames){
         Mat img=imread(filename.toStdString());
         negativeImages.push_back(img);
     }
@@ -50,7 +50,6 @@ void MyPersonDetector::setdata(QStringList pos, QStringList neg)
 
 void MyPersonDetector::loadSVM(string path)
 {
-    svm.getSvm()->clear();
     svm.load(path);
     m_dbg<<svm.getSvm()->getSupportVectors().size().height<<" "<<svm.getSvm()->getSupportVectors().size().width<<endl;
     m_dbg<<svm.getSvm()->getVarCount()<<endl;
@@ -135,7 +134,7 @@ void MyPersonDetector::InitSVMTrainingData(){
     std::vector<int> labels;
 
     while (dataLoader->hasNext()){
-        auto data=dataLoader->next();
+        pair<Mat,int> data=dataLoader->next();
         Mat img;
         resize(data.first,img,Size(64,128));
         images.push_back(img);
@@ -192,12 +191,12 @@ int MyPersonDetector::test()
     vector<Mat> images;
     vector<int> labels;
     QStringList filenames=posData;
-    for (auto filename:filenames){
+    for (QString filename:filenames){
         images.push_back(imread(filename.toStdString()));
         labels.push_back(1);
     }
     filenames=negData;
-    for (auto filename:filenames){
+    for (QString filename:filenames){
         images.push_back(imread(filename.toStdString()));
         labels.push_back(-1);
     }
@@ -222,12 +221,13 @@ void MyPersonDetector::setDataLoader(DataLoader *loader)
     dataLoader=loader;
 }
 
-void prediction_thread(MyPersonDetector * detector , vector<DetectionWindow>* slidingWindows,vector<Rect>*res,int st,int en,Mutex *mtx){
+void prediction_thread(MyPersonDetector * detector , vector<DetectionWindow>* slidingWindows,vector<DetectionWindow>*res,int st,int en,Mutex *mtx){
     for (int i=st;i<en;++i){
         int ans=-1;
-        if (detector->predict((*slidingWindows)[i].getImageWindow())==1){
+        double pr=detector->predict((*slidingWindows)[i].getImageWindow());
+        if (isPositiveClass(pr)){
             mtx->lock();
-            res->push_back((*slidingWindows)[i].getROI());
+            res->push_back((*slidingWindows)[i]);
             mtx->unlock();
             ans=1;
         }
@@ -235,9 +235,10 @@ void prediction_thread(MyPersonDetector * detector , vector<DetectionWindow>* sl
     }
 }
 
-vector<Rect> MyPersonDetector::detectMultiScale(Mat img)
+vector<DetectionWindow> MyPersonDetector::detectMultiScale(Mat img)
 {
-    vector<Rect> res;
+
+    vector<DetectionWindow> res;
     vector<DetectionWindow> slidingWindows=applySlidingWindow(img,64,128,min(img.rows/50,img.cols/50));
     m_dbg<<"found "<<slidingWindows.size()<<"sliding windows";
     int sz=slidingWindows.size()/8;

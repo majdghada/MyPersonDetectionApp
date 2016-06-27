@@ -1,6 +1,4 @@
 #include "mysvm.h"
-
-
 #include <iostream>
 using namespace std;
 
@@ -40,6 +38,7 @@ MySVM::MySVM(int featcnt):MySVM()
 
 void MySVM::load(const string &path)
 {
+    svm->clear();
     svm=svm->load(path);
 }
 
@@ -61,6 +60,7 @@ void MySVM::addExample(Mat feat, int label)
 
 void MySVM::train()
 {
+    svm->clear();
     svm->train(trainingDataMat, ROW_SAMPLE, labelsMat);
     svm->save("/home/majd/Desktop/TrainedSVM-v3.xml");
 }
@@ -86,6 +86,7 @@ float MySVM::predict(Mat feat)
 
 void MySVM::autoTrain(ParamGrid Cgrid,ParamGrid Gammagrid,ParamGrid Pgrid,ParamGrid Nugrid,ParamGrid Coefgrid,ParamGrid Degreegrid)
 {
+    svm->clear();
 
     Ptr<TrainData> traindata=TrainData::create(trainingDataMat,ml::ROW_SAMPLE,labelsMat);
 //    svm->trainAuto(traindata);
