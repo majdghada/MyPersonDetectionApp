@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <opencv2/core.hpp>
+#include <thread>
 using namespace cv;
 namespace Ui {
 class scalableImageWidget;

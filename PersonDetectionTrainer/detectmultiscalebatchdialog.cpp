@@ -62,7 +62,10 @@ Mat DetectMultiScaleBatchDialog::detect(Mat img){
     for (DetectionWindow box:boxes){
         rects.push_back(box.getROI());
     }
-    groupRectangles(rects,0);
+    m_dbg<<"before group"<<rects.size();
+    groupRectangles(rects,0,0.8);
+    m_dbg<<"after group"<<rects.size();
+
     Mat dispImg=img;
     for (Rect rect:rects){
         cv::Mat roi = dispImg(rect);

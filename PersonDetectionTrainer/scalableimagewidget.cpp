@@ -23,6 +23,7 @@ void ScalableImageWidget::updateZoom()
     Mat tmp;
     cv::resize(img,tmp,Size(img.cols*scale,img.rows*scale));
     ui->widget->showImage(tmp);
+
 }
 void ScalableImageWidget::internalWidgetMouseLeft(){
     mouseLeft();

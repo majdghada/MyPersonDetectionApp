@@ -107,7 +107,7 @@ pair<Mat, int> AugmentedDataLoader::next()
     }
     else {
 
-        if (hardExamples.size()>10000){
+        if (hardExamples.size()>20000){
             reduceHardExamplesSize();
         }
         try{
@@ -133,7 +133,7 @@ pair<Mat, int> AugmentedDataLoader::next()
 void AugmentedDataLoader::reduceHardExamplesSize(){
     vector<DetectionWindow> res;
     distribution=uniform_int_distribution<int>(0,hardExamples.size()-1);
-    for (int i=0;i<10000;++i){
+    for (int i=0;i<20000;++i){
         res.push_back(hardExamples[distribution(generator)]);
     }
     hardExamples=res;

@@ -6,45 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>644</width>
-    <height>558</height>
+    <width>478</width>
+    <height>399</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="3">
-    <widget class="QPushButton" name="pushButton">
-     <property name="text">
-      <string>Next</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="5">
     <widget class="QPushButton" name="pushButton_3">
      <property name="text">
       <string>Close</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="pushButton_2">
-     <property name="text">
-      <string>Back</string>
      </property>
     </widget>
    </item>
@@ -74,8 +53,35 @@
      </property>
     </spacer>
    </item>
+   <item row="1" column="1">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="pushButton_2">
+     <property name="text">
+      <string>Back</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0" colspan="6">
     <widget class="ScalableImageWidget" name="widget" native="true"/>
+   </item>
+   <item row="1" column="3">
+    <widget class="QPushButton" name="pushButton">
+     <property name="text">
+      <string>Next</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -94,18 +100,34 @@
  <resources/>
  <connections>
   <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
+   <sender>widget</sender>
+   <signal>mouseEntered()</signal>
    <receiver>DetectMultiScaleBatchDialog</receiver>
-   <slot>NextImage()</slot>
+   <slot>showOriginal()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>423</x>
-     <y>548</y>
+     <x>594</x>
+     <y>80</y>
     </hint>
     <hint type="destinationlabel">
-     <x>266</x>
-     <y>282</y>
+     <x>642</x>
+     <y>70</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>mouseLeft()</signal>
+   <receiver>DetectMultiScaleBatchDialog</receiver>
+   <slot>showHighlighted()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>459</x>
+     <y>124</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>640</x>
+     <y>122</y>
     </hint>
    </hints>
   </connection>
@@ -142,34 +164,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>widget</sender>
-   <signal>mouseEntered()</signal>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
    <receiver>DetectMultiScaleBatchDialog</receiver>
-   <slot>showOriginal()</slot>
+   <slot>NextImage()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>594</x>
-     <y>80</y>
+     <x>423</x>
+     <y>548</y>
     </hint>
     <hint type="destinationlabel">
-     <x>642</x>
-     <y>70</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>widget</sender>
-   <signal>mouseLeft()</signal>
-   <receiver>DetectMultiScaleBatchDialog</receiver>
-   <slot>showHighlighted()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>459</x>
-     <y>124</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>640</x>
-     <y>122</y>
+     <x>266</x>
+     <y>282</y>
     </hint>
    </hints>
   </connection>
