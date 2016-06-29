@@ -40,19 +40,6 @@
      </property>
     </spacer>
    </item>
-   <item row="1" column="0">
-    <spacer name="horizontalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="1" column="1">
     <spacer name="horizontalSpacer">
      <property name="orientation">
@@ -83,6 +70,13 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="0">
+    <widget class="QCheckBox" name="checkBox">
+     <property name="text">
+      <string>Show NMS Boxes</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -106,8 +100,8 @@
    <slot>showOriginal()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>594</x>
-     <y>80</y>
+     <x>468</x>
+     <y>89</y>
     </hint>
     <hint type="destinationlabel">
      <x>642</x>
@@ -138,8 +132,8 @@
    <slot>PreviousImage()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>337</x>
-     <y>548</y>
+     <x>260</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
      <x>82</x>
@@ -154,8 +148,8 @@
    <slot>Close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>634</x>
-     <y>548</y>
+     <x>468</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
      <x>396</x>
@@ -170,12 +164,28 @@
    <slot>NextImage()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>423</x>
-     <y>548</y>
+     <x>346</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
      <x>266</x>
      <y>282</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DetectMultiScaleBatchDialog</receiver>
+   <slot>showNMS(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>32</x>
+     <y>381</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>6</x>
+     <y>379</y>
     </hint>
    </hints>
   </connection>
@@ -186,5 +196,6 @@
   <slot>Close()</slot>
   <slot>showOriginal()</slot>
   <slot>showHighlighted()</slot>
+  <slot>showNMS(bool)</slot>
  </slots>
 </ui>

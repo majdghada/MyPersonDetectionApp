@@ -1,6 +1,16 @@
 #include "detectionwindow.h"
 #include "trainermainwindow.h"
 using namespace std;
+double DetectionWindow::getPrediction() const
+{
+    return prediction;
+}
+
+void DetectionWindow::setPrediction(double value)
+{
+    prediction = value;
+}
+
 DetectionWindow::DetectionWindow(const Mat & image,const Rect &roi){
     this->image=image;
     this->roi=roi;
@@ -10,6 +20,7 @@ DetectionWindow::DetectionWindow(const DetectionWindow &detectionWindow)
 {
     image=detectionWindow.image;
     roi=detectionWindow.roi;
+    prediction=detectionWindow.prediction;
 }
 
 DetectionWindow::DetectionWindow(const Mat &image,const int & startRow,const int & startCol,const int & height,const int & width){

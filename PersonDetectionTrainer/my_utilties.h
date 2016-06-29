@@ -6,11 +6,36 @@
 #include <iostream>
 #include <QtGlobal>
 #include <QtDebug>
+#include <opencv2/core.hpp>
+#include <opencv2/objdetect.hpp>
+#include <opencv2/ml.hpp>
 using namespace std;
 extern QTime myTimer;
 bool isPositiveClass(double weight);
 bool isNegativeClass(double weight);
 void setAppTheme(QApplication * a);
+class MyPersonDetector;
+void addNMSRects(vector<cv::Rect> rects, cv::Mat dispImg);
+cv::Mat getDispImg(MyPersonDetector *detector,cv::Mat img);
+cv::Mat getDispImg(cv::HOGDescriptor *hog,cv::Mat img);
+void loadDetectorFromFile(MyPersonDetector &detector, string filename, QWidget *parent=0);
+vector<cv::Rect>  nonMaximumSupression(vector<cv::Rect> rects, double overlapThreshold,vector<double> weights=vector<double>());
+void get_svm_detector(const cv::Ptr<cv::ml::SVM>& svm, vector< float > & hog_detector );
+
+template <typename T>
+std::vector<int> compute_order(const std::vector<T>& v)
+{
+    std::vector<int> indices(v.size());
+    std::iota(indices.begin(), indices.end(), 0u);
+    std::sort(indices.begin(), indices.end(), [&](int lhs, int rhs) {
+        return v[lhs] < v[rhs];
+    });
+    std::vector<int> res(v.size());
+    for (int i = 0; i != indices.size(); ++i) {
+        res[indices[i]] = i;
+    }
+    return res;
+}
 
 template <class T>
 class MyComboBox{
@@ -79,6 +104,8 @@ void MyComboBox<T>::setSelectedIndex(int index)
 {
     comboBox->setCurrentIndex(index);
 }
+
+
 
 #define m_dbg qDebug()<<QTime::currentTime().toString("hh:mm:ss.zzz a :")<< myTimer.elapsed()<<":"
 

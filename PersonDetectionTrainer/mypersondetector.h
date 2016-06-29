@@ -10,7 +10,6 @@ class DataLoader;
 class MyPersonDetector
 {
 protected:
-    MySVM svm;
     QStringList posData;
     QStringList negData;
     std::vector<Mat> positiveImages;
@@ -21,6 +20,8 @@ protected:
     FeatureExtractionStrategy * fxs;
 public:
     MyPersonDetector();
+
+    MySVM svm;
     void setdata(QStringList pos,QStringList neg);
     void loadSVM(std::string path);
     void saveSVM(std::string path);

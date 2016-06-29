@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include "mypersondetector.h"
+#include <opencv2/videoio.hpp>
+#include "my_utilties.h"
 namespace Ui {
 class DetectorMainWindow;
 }
@@ -17,12 +19,21 @@ public:
 
 public slots:
     void imagesBrowse();
-    void writtenPaths();
+    void writtenImagesPaths();
+    void detectorBrowse();
+    void writtenDetectorPath();
+    void videoBrowse();
+    void writtenVideoPath();
+    void startVideo();
+
 
 private:
     Ui::DetectorMainWindow *ui;
     MyPersonDetector detector;
     void showImages(QStringList selected);
+
+    void videoDetect(VideoCapture &source);
+    MyComboBox<int> trackingMethodCombo;
 };
 
 #endif // DETECTORMAINWINDOW_H

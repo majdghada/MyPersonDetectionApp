@@ -11,6 +11,7 @@ DetectMultiScaleBatchDialog::DetectMultiScaleBatchDialog(QWidget *parent, QStrin
     ui->setupUi(this);
     this->images=images;
     id=0;
+    NMS=ui->checkBox->isChecked();
 //    imageWidget=new ImageWidget();
     imageWidget=ui->widget;
     this->detector=detector;
@@ -18,7 +19,7 @@ DetectMultiScaleBatchDialog::DetectMultiScaleBatchDialog(QWidget *parent, QStrin
     if (images.size()>0){
         original=imread(images[id].toStdString());
         highlighted=detect(original.clone());
-        imageWidget->showImage(highlighted);
+        showHighlighted();
     }
 }
 
@@ -34,7 +35,7 @@ void DetectMultiScaleBatchDialog::NextImage()
         id=(id+images.size())%images.size();
         original=imread(images[id].toStdString());
         highlighted=detect(original.clone());
-        imageWidget->showImage(highlighted);
+        showHighlighted();
     }
 }
 
@@ -45,8 +46,7 @@ void DetectMultiScaleBatchDialog::PreviousImage()
         id=(id+images.size())%images.size();
         original=imread(images[id].toStdString());
         highlighted=detect(original.clone());
-
-        imageWidget->showImage(highlighted);
+        showHighlighted();
     }
 
 }
@@ -55,16 +55,17 @@ void DetectMultiScaleBatchDialog::Close()
 {
     this->close();
 }
+
+
 Mat DetectMultiScaleBatchDialog::detect(Mat img){
 
     vector<DetectionWindow> boxes=detector->detectMultiScale(img);
     vector<Rect> rects;
+    vector<double> weights;
     for (DetectionWindow box:boxes){
         rects.push_back(box.getROI());
+        weights.push_back(box.getPrediction());
     }
-    m_dbg<<"before group"<<rects.size();
-    groupRectangles(rects,0,0.8);
-    m_dbg<<"after group"<<rects.size();
 
     Mat dispImg=img;
     for (Rect rect:rects){
@@ -72,9 +73,17 @@ Mat DetectMultiScaleBatchDialog::detect(Mat img){
         cv::Mat color(roi.size(), CV_8UC3, cv::Scalar(0, 255,0));
         double alpha = 0.01;
         cv::addWeighted(color, alpha, roi, 1.0 - alpha , 0.0, roi);
-//            rectangle(dispImg,box,cv::Scalar(0,255,0.1),);
+           // rectangle(dispImg,rect,cv::Scalar(0,255,0.1));
     }
+    m_dbg<<"before group"<<rects.size();
+    //groupRectangles(rects,0,0.8);
+    rects=nonMaximumSupression(rects,0.5,weights);
+    m_dbg<<"after group"<<rects.size();
+    noNMS=dispImg.clone();
+    addNMSRects(rects,dispImg);
+
     return dispImg;
+
 
 }
 void DetectMultiScaleBatchDialog::showOriginal(){
@@ -84,6 +93,13 @@ void DetectMultiScaleBatchDialog::showOriginal(){
 }
 void DetectMultiScaleBatchDialog::showHighlighted(){
     m_dbg<<"show highlighted";
-    imageWidget->showImage(highlighted);
+    if (NMS)
+        imageWidget->showImage(highlighted);
+    else
+        imageWidget->showImage(noNMS);
     imageWidget->repaint();
+}
+void DetectMultiScaleBatchDialog::showNMS(bool b){
+    NMS=b;
+    showHighlighted();
 }

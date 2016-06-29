@@ -17,20 +17,24 @@ public:
     explicit DetectMultiScaleBatchDialog(QWidget *parent = 0,QStringList images=QStringList(),MyPersonDetector *detector=NULL);
     ~DetectMultiScaleBatchDialog();
 
+
+    
 private:
     Ui::DetectMultiScaleBatchDialog *ui;
     QStringList images;
     ScalableImageWidget *imageWidget;
     MyPersonDetector *detector;
     int id;
-    Mat highlighted,original;
+    Mat highlighted,original,noNMS;
     Mat detect(Mat img);
+    bool NMS;
 public slots:
     void NextImage();
     void PreviousImage();
     void Close();
     void showOriginal();
     void showHighlighted();
+    void showNMS(bool);
 };
 
 #endif // DETECTMULTISCALEBATCHDIALOG_H

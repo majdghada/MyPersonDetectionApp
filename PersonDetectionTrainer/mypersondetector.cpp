@@ -225,6 +225,7 @@ void prediction_thread(MyPersonDetector * detector , vector<DetectionWindow>* sl
     for (int i=st;i<en;++i){
         int ans=-1;
         double pr=detector->predict((*slidingWindows)[i].getImageWindow());
+        (*slidingWindows)[i].setPrediction(pr);
         if (isPositiveClass(pr)){
             mtx->lock();
             res->push_back((*slidingWindows)[i]);
@@ -239,7 +240,7 @@ vector<DetectionWindow> MyPersonDetector::detectMultiScale(Mat img)
 {
 
     vector<DetectionWindow> res;
-    vector<DetectionWindow> slidingWindows=applySlidingWindow(img,64,128,min(img.rows/50,img.cols/50));
+    vector<DetectionWindow> slidingWindows=applySlidingWindow(img);
     m_dbg<<"found "<<slidingWindows.size()<<"sliding windows";
     int sz=slidingWindows.size()/8;
     std::thread * threads[8];

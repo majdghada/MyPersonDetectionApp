@@ -42,7 +42,7 @@ AugmentedDataLoader::AugmentedDataLoader( vector<Mat> &posData,  vector<Mat> &ne
     pos=&posData;
     neg=&negData;
     imageIdx=0;
-    negWindows=1;
+    negWindows=10;
     windowInImageidx=negWindows;
     this->originalDetector=originalDetector;
 

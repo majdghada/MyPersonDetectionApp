@@ -10,6 +10,7 @@
 #include <opencv2/objdetect.hpp>
 #include "detectmultiscalebatchdialog.h"
 #include <QtDebug>
+#include "my_utilties.h"
 using namespace cv;
 TrainerMainWindow::TrainerMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -183,7 +184,8 @@ void TrainerMainWindow::detectSlidingWindow()
                 rects.push_back(box.getROI());
             }
             m_dbg<<"before grouping "<<rects.size();
-            groupRectangles(rects,0);
+//            groupRectangles(rects,0);
+            rects=nonMaximumSupression(rects,0.4);
             m_dbg<<"after grouping "<<rects.size();
     //        imshow(filenames[0].toStdString(),imread(filenames[0].toStdString()));
             QMessageBox dia(QMessageBox::Information, "info", QString("%1").arg(boxes.size()), QMessageBox::Ok, this);

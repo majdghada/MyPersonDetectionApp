@@ -9,6 +9,7 @@ class DetectionWindow
 private:
     Mat image;
     Rect roi;
+    double prediction;
 public:
     DetectionWindow(const Mat &img,const Rect & roi);
     DetectionWindow(const DetectionWindow & detectionWindow);
@@ -17,6 +18,8 @@ public:
     Mat getImageWindow();
     Rect getROI();
     Mat getFullImage();
+    double getPrediction() const;
+    void setPrediction(double value);
 };
 Mat getCentral64x128Image(const Mat & img);
 DetectionWindow getCentral64x128Window(const Mat & img);
@@ -32,6 +35,6 @@ DetectionWindow getCentral64x128Window(const Mat & img);
     \a heigtwidthratio : the ratio (heigt / width) of each window
 
 */
-std::vector<DetectionWindow> applySlidingWindow(const Mat &img,int minwidth=64,int minheight=128,int stride=8,float scaleRatio=1.02,float heightwidthratio=2,int maxLevels=13);
+std::vector<DetectionWindow> applySlidingWindow(const Mat &img,int minwidth=64,int minheight=128,int stride=8,float scaleRatio=1.02,float heightwidthratio=2,int maxLevels=10);
 
 #endif // DETECTIONWINDOW_H
