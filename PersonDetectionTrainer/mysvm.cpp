@@ -38,8 +38,7 @@ MySVM::MySVM(int featcnt):MySVM()
 
 void MySVM::load(const string &path)
 {
-    svm->clear();
-    svm=svm->load(path);
+    svm=Algorithm::load<ml::SVM>(path);
 }
 
 void MySVM::addExample(Mat feat, int label)

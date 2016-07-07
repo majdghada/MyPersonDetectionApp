@@ -278,8 +278,8 @@
    <slot>imagesBrowse()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>119</x>
-     <y>122</y>
+     <x>647</x>
+     <y>209</y>
     </hint>
     <hint type="destinationlabel">
      <x>653</x>
@@ -294,8 +294,8 @@
    <slot>writtenImagesPaths()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>119</x>
-     <y>122</y>
+     <x>197</x>
+     <y>209</y>
     </hint>
     <hint type="destinationlabel">
      <x>676</x>
@@ -310,8 +310,8 @@
    <slot>startVideo()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>633</x>
-     <y>300</y>
+     <x>647</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel">
      <x>673</x>
@@ -326,8 +326,8 @@
    <slot>detectorBrowse()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>641</x>
-     <y>27</y>
+     <x>658</x>
+     <y>118</y>
     </hint>
     <hint type="destinationlabel">
      <x>675</x>
@@ -342,8 +342,8 @@
    <slot>videoBrowse()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>617</x>
-     <y>247</y>
+     <x>638</x>
+     <y>348</y>
     </hint>
     <hint type="destinationlabel">
      <x>675</x>

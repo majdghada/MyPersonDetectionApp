@@ -27,7 +27,9 @@ SOURCES += \
     $$PWD/../PersonDetectionTrainer/detectmultiscalebatchdialog.cpp \
     $$PWD/../PersonDetectionTrainer/imagewidget.cpp \
     $$PWD/../PersonDetectionTrainer/scalableimagewidget.cpp \
-    detectormainwindow.cpp
+    detectormainwindow.cpp \
+    kalmansifthogvideo.cpp \
+    kalmansifttrackableframe.cpp
 
 
 HEADERS  += $$PWD/../PersonDetectionTrainer/trainermainwindow.h \
@@ -43,7 +45,9 @@ HEADERS  += $$PWD/../PersonDetectionTrainer/trainermainwindow.h \
     $$PWD/../PersonDetectionTrainer/detectmultiscalebatchdialog.h \
     $$PWD/../PersonDetectionTrainer/imagewidget.h \
     $$PWD/../PersonDetectionTrainer/scalableimagewidget.h \
-    detectormainwindow.h
+    detectormainwindow.h \
+    kalmansifthogvideo.h \
+    kalmansifttrackableframe.h
 
 
 FORMS    +=$$PWD/../PersonDetectionTrainer/trainermainwindow.ui \
@@ -57,6 +61,8 @@ CONFIG += c++11
 
 LIBS += -L/usr/local/lib \
         -lopencv_core \
+        -lopencv_flann \
+        -lopencv_calib3d \
         -lopencv_imgcodecs \
         -lopencv_highgui \
         -lopencv_imgproc \
@@ -64,7 +70,6 @@ LIBS += -L/usr/local/lib \
         -lopencv_video \
         -lopencv_features2d \
         -lopencv_objdetect \
-        -lopencv_nonfree \
         -lopencv_xfeatures2d \
         -lopencv_ml
 

@@ -26,13 +26,13 @@ public slots:
     void writtenVideoPath();
     void startVideo();
 
-
 private:
     Ui::DetectorMainWindow *ui;
     MyPersonDetector detector;
     void showImages(QStringList selected);
 
-    void videoDetect(VideoCapture &source);
+    void videoDetectBF(VideoCapture *source);
+    void videoDetect(VideoCapture *source);
     MyComboBox<int> trackingMethodCombo;
 };
 

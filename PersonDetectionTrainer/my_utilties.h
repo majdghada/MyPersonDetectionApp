@@ -9,6 +9,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/objdetect.hpp>
 #include <opencv2/ml.hpp>
+#include <set>
 using namespace std;
 extern QTime myTimer;
 bool isPositiveClass(double weight);
@@ -36,7 +37,34 @@ std::vector<int> compute_order(const std::vector<T>& v)
     }
     return res;
 }
-
+namespace ListRemover{
+    template <typename T>
+    void removeIndexesFromList(std::list<T> &l,std::set<int> &indexes){
+        typename std::list<T>::iterator i=l.begin();
+        int idx=0;
+        while (i!=l.end()){
+            if (indexes.count(idx)){
+                l.erase(i++);
+            }
+            else {
+                i++;
+            }
+            idx++;
+        }
+    }
+    template <typename T>
+    void removeElementsFromList(std::list<T> &l,std::set<T> &elements){
+        typename std::list<T>::iterator i=l.begin();
+        while (i!=l.end()){
+            if (elements.count(*i)){
+                l.erase(i++);
+            }
+            else {
+                i++;
+            }
+        }
+    }
+}
 template <class T>
 class MyComboBox{
 private:

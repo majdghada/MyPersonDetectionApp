@@ -50,9 +50,11 @@ void MyPersonDetector::setdata(QStringList pos, QStringList neg)
 
 void MyPersonDetector::loadSVM(string path)
 {
+    svm=MySVM();
     svm.load(path);
-    m_dbg<<svm.getSvm()->getSupportVectors().size().height<<" "<<svm.getSvm()->getSupportVectors().size().width<<endl;
-    m_dbg<<svm.getSvm()->getVarCount()<<endl;
+
+//    m_dbg<<svm.getSvm()->getSupportVectors().size().height<<" "<<svm.getSvm()->getSupportVectors().size().width<<endl;
+//    m_dbg<<svm.getSvm()->getVarCount()<<endl;
 }
 
 void MyPersonDetector::saveSVM(string path)

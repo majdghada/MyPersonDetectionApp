@@ -133,28 +133,6 @@ void loadDetectorFromFile(MyPersonDetector &detector, string filename,QWidget *p
     QMessageBox dia(QMessageBox::Information, "info", "Detector loaded", QMessageBox::Ok,parent);
     dia.exec();
 }
-namespace ListRemover{
-    int step=0;
-    void removeElementsFromList(std::list<int> &l,set<int> &s){
-//        m_dbg<<"start remove after step "<<step++;
-//        m_dbg<<l.size()<<" elements in list , "<<s.size()<<"elements in set";
-        std::list<int>::iterator i=l.begin();
-        int idx=0;
-        while (i!=l.end()){
-            if (s.count(idx)){
-                l.erase(i++);
-            }
-            else {
-                i++;
-            }
-            idx++;
-        }
-
-//        m_dbg<<l.size()<<" elements in list , "<<s.size()<<"elements in set";
-//        m_dbg<<"end remove";
-    }
-}
-
 
 vector<Rect> nonMaximumSupression(vector<Rect> rects, double overlapThreshold, vector<double> weights)
 {
@@ -200,7 +178,7 @@ vector<Rect> nonMaximumSupression(vector<Rect> rects, double overlapThreshold, v
             if (overlap > overlapThreshold)
                 suppress.insert(pos);
         }
-        ListRemover::removeElementsFromList(idxs,suppress);
+        ListRemover::removeIndexesFromList(idxs,suppress);
     }
     vector<Rect>res;
     for (int id:pick){
