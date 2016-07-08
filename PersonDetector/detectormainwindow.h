@@ -32,8 +32,9 @@ private:
     void showImages(QStringList selected);
 
     void videoDetectBF(VideoCapture *source);
-    void videoDetect(VideoCapture *source);
+    void videoDetectSiftTracker(VideoCapture *source);
     MyComboBox<int> trackingMethodCombo;
+    void videoDetectHogTracker(VideoCapture *source);
 };
 
 #endif // DETECTORMAINWINDOW_H

@@ -34,6 +34,7 @@ private:
 
 
 
+
 public :
     KalmanSiftTrackableFrame(KalmanSiftHogVideo * video,cv::Mat ObjectToTrack);
     std::pair<int,int> getKalmanPrediction();

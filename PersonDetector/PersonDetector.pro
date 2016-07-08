@@ -29,7 +29,9 @@ SOURCES += \
     $$PWD/../PersonDetectionTrainer/scalableimagewidget.cpp \
     detectormainwindow.cpp \
     kalmansifthogvideo.cpp \
-    kalmansifttrackableframe.cpp
+    kalmansifttrackableframe.cpp \
+    kalmanhogvideo.cpp \
+    kalmanhogtrackableframe.cpp
 
 
 HEADERS  += $$PWD/../PersonDetectionTrainer/trainermainwindow.h \
@@ -47,7 +49,9 @@ HEADERS  += $$PWD/../PersonDetectionTrainer/trainermainwindow.h \
     $$PWD/../PersonDetectionTrainer/scalableimagewidget.h \
     detectormainwindow.h \
     kalmansifthogvideo.h \
-    kalmansifttrackableframe.h
+    kalmansifttrackableframe.h \
+    kalmanhogvideo.h \
+    kalmanhogtrackableframe.h
 
 
 FORMS    +=$$PWD/../PersonDetectionTrainer/trainermainwindow.ui \

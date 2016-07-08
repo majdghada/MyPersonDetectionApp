@@ -1,7 +1,6 @@
 #ifndef KALMANSIFTHOGVIDEO_H
 #define KALMANSIFTHOGVIDEO_H
 #include "kalmansifttrackableframe.h"
-#include <QObject>
 
 class KalmanSiftTrackableFrame;
 
@@ -23,6 +22,7 @@ public:
     KalmanSiftHogVideo(cv::HOGDescriptor * hog, cv::VideoCapture * src);
     ~KalmanSiftHogVideo();
     cv::Mat getCurrentFrame();
+    void setTerminated();
 
 };
 

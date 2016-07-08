@@ -153,3 +153,8 @@ cv::Mat KalmanSiftHogVideo::getCurrentFrame()
 {
     return lastFrame.clone();
 }
+
+void KalmanSiftHogVideo::setTerminated()
+{
+    terminated=true;
+}

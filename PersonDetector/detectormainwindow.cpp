@@ -9,6 +9,7 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
 #include "kalmansifthogvideo.h"
+#include "kalmanhogvideo.h"
 using namespace cv;
 DetectorMainWindow::DetectorMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -21,6 +22,8 @@ DetectorMainWindow::DetectorMainWindow(QWidget *parent) :
     trackingMethodCombo.setComboBox(ui->trackingMethodComboBox);
     trackingMethodCombo.add_item("Brute Force",0);
     trackingMethodCombo.add_item("SIFT Matching",1);
+
+    trackingMethodCombo.add_item("Hog Local Detection",2);
 
 
 }
@@ -96,7 +99,7 @@ void DetectorMainWindow::writtenVideoPath()
 {
 
 }
-void DetectorMainWindow::videoDetect(VideoCapture * source){
+void DetectorMainWindow::videoDetectSiftTracker(VideoCapture * source){
     if (!source->isOpened()){
         m_dbg<<"invalid source";
         return ;
@@ -110,6 +113,31 @@ void DetectorMainWindow::videoDetect(VideoCapture * source){
     m_dbg<<"before new kalmansifthogvideo";
     KalmanSiftHogVideo *vid=new KalmanSiftHogVideo(hog,source);
     m_dbg<<"after new kalman sift hog video";
+//    while (waitKey(30)!='q'){
+
+//    }
+//    vid->setTerminated();
+    return ;
+}
+void DetectorMainWindow::videoDetectHogTracker(VideoCapture * source){
+    if (!source->isOpened()){
+        m_dbg<<"invalid source";
+        return ;
+    }
+    HOGDescriptor *hog=new HOGDescriptor();
+    hog->setSVMDetector(hog->getDefaultPeopleDetector());
+    HOGDescriptor *myHog=new HOGDescriptor();
+    vector<float> hog_detector_vec;
+    get_svm_detector(detector.svm.getSvm(),hog_detector_vec);
+    myHog->setSVMDetector(hog_detector_vec);
+    m_dbg<<"before new kalmanhogvideo";
+    KalmanHogVideo *vid=new KalmanHogVideo(hog,source);
+    m_dbg<<"after new kalman sift hog video";
+//    while (waitKey(1)!='q'){
+//        std::this_thread::sleep_for(chrono::milliseconds(30));
+//    }
+//    waitKey();
+//    vid->setTerminated();
     return ;
 }
 void DetectorMainWindow::videoDetectBF(VideoCapture * source){
@@ -148,14 +176,19 @@ void DetectorMainWindow::startVideo()
         if (trackingMethodCombo.getSelectedValue()==0)
             videoDetectBF(cam);
         else if (trackingMethodCombo.getSelectedValue()==1)
-            videoDetect(cam);
+            videoDetectSiftTracker(cam);
+        else if (trackingMethodCombo.getSelectedValue()==2)
+            videoDetectHogTracker(cam);
     }
     else {
         VideoCapture *vid=new VideoCapture(ui->videoLineEdit->text().toStdString());
         if (trackingMethodCombo.getSelectedValue()==0)
             videoDetectBF(vid);
         else if (trackingMethodCombo.getSelectedValue()==1)
-            videoDetect(vid);
+            videoDetectSiftTracker(vid);
+        else if (trackingMethodCombo.getSelectedValue()==2)
+            videoDetectHogTracker(vid);
+
 
     }
 }
