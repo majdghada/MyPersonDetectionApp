@@ -111,7 +111,7 @@ void DetectorMainWindow::videoDetectSiftTracker(VideoCapture * source){
     get_svm_detector(detector.svm.getSvm(),hog_detector_vec);
     myHog->setSVMDetector(hog_detector_vec);
     m_dbg<<"before new kalmansifthogvideo";
-    KalmanSiftHogVideo *vid=new KalmanSiftHogVideo(hog,source);
+    kshvid=new KalmanSiftHogVideo(hog,source);
     m_dbg<<"after new kalman sift hog video";
 //    while (waitKey(30)!='q'){
 
@@ -131,8 +131,8 @@ void DetectorMainWindow::videoDetectHogTracker(VideoCapture * source){
     get_svm_detector(detector.svm.getSvm(),hog_detector_vec);
     myHog->setSVMDetector(hog_detector_vec);
     m_dbg<<"before new kalmanhogvideo";
-    KalmanHogVideo *vid=new KalmanHogVideo(hog,source);
-    m_dbg<<"after new kalman sift hog video";
+    khvid=new KalmanHogVideo(hog,source);
+    m_dbg<<"after new kalmanhogvideo";
 //    while (waitKey(1)!='q'){
 //        std::this_thread::sleep_for(chrono::milliseconds(30));
 //    }
@@ -191,6 +191,14 @@ void DetectorMainWindow::startVideo()
 
 
     }
+}
+
+void DetectorMainWindow::stopVideo()
+{
+    if (trackingMethodCombo.getSelectedValue()==1)
+        kshvid->setTerminated();
+    else if (trackingMethodCombo.getSelectedValue()==2)
+        khvid->setTerminated();
 }
 
 

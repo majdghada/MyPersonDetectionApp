@@ -31,21 +31,25 @@ void KalmanSiftTrackableFrame::matchingThread(){
         for (std::vector<cv::DMatch> a:matches){
             if (a.size()<2)continue;
             if (a[0].distance<a[1].distance*0.75){
-                matchKps.push_back(frameKps[a[0].trainIdx]);
+//                matchKps.push_back(frameKps[a[0].trainIdx]);
                 toDraw[0].push_back(a[0]);
             }
         }
-//        sort(toDraw[0].begin(),toDraw[0].end(),[](cv::DMatch a,cv::DMatch b){
-//            return a.distance<b.distance;
-//        });
+        sort(toDraw[0].begin(),toDraw[0].end(),[](cv::DMatch a,cv::DMatch b){
+            return a.distance<b.distance;
+        });
+        for (cv::DMatch a:toDraw[0]){
+            matchKps.push_back(frameKps[a.trainIdx]);
+        }
         m_dbg<<matchKps.size()<<"matches";
 
         if (matchKps.size()<4){
             noMatchCount++;
             continue;
         }
+        matchKps=std::vector<cv::KeyPoint> (matchKps.begin(),matchKps.begin()+4);
 
-//        toDraw[0]=std::vector<cv::DMatch> (toDraw[0].begin(),toDraw[0].begin()+3);
+        toDraw[0]=std::vector<cv::DMatch> (toDraw[0].begin(),toDraw[0].begin()+4);
         noMatchCount=0;
         x=0,y=0;
         for (cv::KeyPoint p:matchKps){
@@ -63,43 +67,43 @@ void KalmanSiftTrackableFrame::matchingThread(){
 
         cv::Mat out;
 //        mtx.lock();
-//        try{
-//        cv::drawMatches(ObjectToTrack,kps,currentFrame,frameKps,toDraw,out,
-//                        cv::Scalar::all(-1),cv::Scalar::all(-1),std::vector<std::vector<char> > (),
-//                        cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS|cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+        try{
+        cv::drawMatches(ObjectToTrack,kps,currentFrame,frameKps,toDraw,out,
+                        cv::Scalar::all(-1),cv::Scalar::all(-1),std::vector<std::vector<char> > (),
+                        cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS|cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
 
-//        //-- Localize the object
-//        std::vector<cv::Point2f> obj;
-//        std::vector<cv::Point2f> scene;
-//        std::vector<cv::DMatch>&good_matches=toDraw[0];
-//        std::vector<cv::KeyPoint>&keypoints_object=kps;
-//        std::vector<cv::KeyPoint>&keypoints_scene=frameKps;
-//        cv::Mat & img_object=ObjectToTrack;
-//        cv::Mat & img_matches=out;
-//        for( size_t i = 0; i < good_matches.size(); i++ )
-//        {
-//          //-- Get the keypoints from the good matches
-//          obj.push_back( keypoints_object[ good_matches[i].queryIdx ].pt );
-//          scene.push_back( keypoints_scene[ good_matches[i].trainIdx ].pt );
-//        }
-//        cv::Mat H = cv::findHomography( obj, scene, cv::RANSAC );
-//        //-- Get the corners from the image_1 ( the object to be "detected" )
-//        std::vector<cv::Point2f> obj_corners(4);
-//        obj_corners[0] = cvPoint(0,0); obj_corners[1] = cvPoint( img_object.cols, 0 );
-//        obj_corners[2] = cvPoint( img_object.cols, img_object.rows ); obj_corners[3] = cvPoint( 0, img_object.rows );
-//        std::vector<cv::Point2f> scene_corners(4);
-//        cv::perspectiveTransform( obj_corners, scene_corners, H);
-//        //-- Draw lines between the corners (the mapped object in the scene - image_2 )
-//        cv::line( img_matches, scene_corners[0] + cv::Point2f( img_object.cols, 0), scene_corners[1] + cv::Point2f( img_object.cols, 0), cv::Scalar(0, 255, 0), 4 );
-//        cv::line( img_matches, scene_corners[1] + cv::Point2f( img_object.cols, 0), scene_corners[2] + cv::Point2f( img_object.cols, 0), cv::Scalar( 0, 255, 0), 4 );
-//        cv::line( img_matches, scene_corners[2] + cv::Point2f( img_object.cols, 0), scene_corners[3] + cv::Point2f( img_object.cols, 0), cv::Scalar( 0, 255, 0), 4 );
-//        cv::line( img_matches, scene_corners[3] + cv::Point2f( img_object.cols, 0), scene_corners[0] + cv::Point2f( img_object.cols, 0), cv::Scalar( 0, 255, 0), 4 );
-//        //-- Show detected matches
-//        cv::imshow( "Good Matches & Object detection", img_matches );
-//        }
-//        catch( cv::Exception e){
+        //-- Localize the object
+        std::vector<cv::Point2f> obj;
+        std::vector<cv::Point2f> scene;
+        std::vector<cv::DMatch>&good_matches=toDraw[0];
+        std::vector<cv::KeyPoint>&keypoints_object=kps;
+        std::vector<cv::KeyPoint>&keypoints_scene=frameKps;
+        cv::Mat & img_object=ObjectToTrack;
+        cv::Mat & img_matches=out;
+        for( size_t i = 0; i < good_matches.size(); i++ )
+        {
+          //-- Get the keypoints from the good matches
+          obj.push_back( keypoints_object[ good_matches[i].queryIdx ].pt );
+          scene.push_back( keypoints_scene[ good_matches[i].trainIdx ].pt );
+        }
+        cv::Mat H = cv::findHomography( obj, scene, cv::RANSAC );
+        //-- Get the corners from the image_1 ( the object to be "detected" )
+        std::vector<cv::Point2f> obj_corners(4);
+        obj_corners[0] = cvPoint(0,0); obj_corners[1] = cvPoint( img_object.cols, 0 );
+        obj_corners[2] = cvPoint( img_object.cols, img_object.rows ); obj_corners[3] = cvPoint( 0, img_object.rows );
+        std::vector<cv::Point2f> scene_corners(4);
+        cv::perspectiveTransform( obj_corners, scene_corners, H);
+        //-- Draw lines between the corners (the mapped object in the scene - image_2 )
+        cv::line( img_matches, scene_corners[0] + cv::Point2f( img_object.cols, 0), scene_corners[1] + cv::Point2f( img_object.cols, 0), cv::Scalar(0, 255, 0), 4 );
+        cv::line( img_matches, scene_corners[1] + cv::Point2f( img_object.cols, 0), scene_corners[2] + cv::Point2f( img_object.cols, 0), cv::Scalar( 0, 255, 0), 4 );
+        cv::line( img_matches, scene_corners[2] + cv::Point2f( img_object.cols, 0), scene_corners[3] + cv::Point2f( img_object.cols, 0), cv::Scalar( 0, 255, 0), 4 );
+        cv::line( img_matches, scene_corners[3] + cv::Point2f( img_object.cols, 0), scene_corners[0] + cv::Point2f( img_object.cols, 0), cv::Scalar( 0, 255, 0), 4 );
+        //-- Show detected matches
+        cv::imshow( "Good Matches & Object detection", img_matches );
+        }
+        catch( cv::Exception e){
 
-//        }
+        }
 
 ////        mtx.unlock();
 

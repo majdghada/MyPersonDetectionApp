@@ -60,7 +60,6 @@ LIBS += -L/usr/local/lib \
         -lopencv_video \
         -lopencv_features2d \
         -lopencv_objdetect \
-        -lopencv_nonfree \
         -lopencv_xfeatures2d \
         -lopencv_ml
 

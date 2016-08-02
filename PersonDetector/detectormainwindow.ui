@@ -246,6 +246,13 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_5">
+             <property name="text">
+              <string>stop</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -278,8 +285,8 @@
    <slot>imagesBrowse()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>647</x>
-     <y>209</y>
+     <x>119</x>
+     <y>122</y>
     </hint>
     <hint type="destinationlabel">
      <x>653</x>
@@ -294,8 +301,8 @@
    <slot>writtenImagesPaths()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>197</x>
-     <y>209</y>
+     <x>119</x>
+     <y>122</y>
     </hint>
     <hint type="destinationlabel">
      <x>676</x>
@@ -310,8 +317,8 @@
    <slot>startVideo()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>647</x>
-     <y>408</y>
+     <x>335</x>
+     <y>338</y>
     </hint>
     <hint type="destinationlabel">
      <x>673</x>
@@ -327,7 +334,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>658</x>
-     <y>118</y>
+     <y>40</y>
     </hint>
     <hint type="destinationlabel">
      <x>675</x>
@@ -343,11 +350,27 @@
    <hints>
     <hint type="sourcelabel">
      <x>638</x>
-     <y>348</y>
+     <y>255</y>
     </hint>
     <hint type="destinationlabel">
      <x>675</x>
      <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_5</sender>
+   <signal>clicked()</signal>
+   <receiver>DetectorMainWindow</receiver>
+   <slot>stopVideo()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>640</x>
+     <y>330</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>671</x>
+     <y>327</y>
     </hint>
    </hints>
   </connection>
@@ -360,5 +383,6 @@
   <slot>startVideo()</slot>
   <slot>videoBrowse()</slot>
   <slot>writtenVideoPath()</slot>
+  <slot>stopVideo()</slot>
  </slots>
 </ui>

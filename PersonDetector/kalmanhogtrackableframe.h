@@ -42,6 +42,7 @@ public:
     bool checkContains(KalmanHogTrackableFrame * f);
     ~KalmanHogTrackableFrame();
     float getArea();
+    int score;
 };
 
 #endif // KALMANHOGTRACKABLEFRAME_H

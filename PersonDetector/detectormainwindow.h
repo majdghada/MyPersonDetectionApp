@@ -5,6 +5,8 @@
 #include "mypersondetector.h"
 #include <opencv2/videoio.hpp>
 #include "my_utilties.h"
+#include "kalmanhogvideo.h"
+#include "kalmansifthogvideo.h"
 namespace Ui {
 class DetectorMainWindow;
 }
@@ -25,10 +27,13 @@ public slots:
     void videoBrowse();
     void writtenVideoPath();
     void startVideo();
+    void stopVideo();
 
 private:
     Ui::DetectorMainWindow *ui;
     MyPersonDetector detector;
+    KalmanSiftHogVideo *kshvid;
+    KalmanHogVideo *khvid;
     void showImages(QStringList selected);
 
     void videoDetectBF(VideoCapture *source);

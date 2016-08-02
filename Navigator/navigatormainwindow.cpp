@@ -8,6 +8,7 @@ NavigatorMainWindow::NavigatorMainWindow(QWidget *parent) :
     ui(new Ui::NavigatorMainWindow)
 {
     ui->setupUi(this);
+    setAttribute(Qt::WA_QuitOnClose);
 }
 
 NavigatorMainWindow::~NavigatorMainWindow()

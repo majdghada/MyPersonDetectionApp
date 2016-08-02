@@ -26,7 +26,8 @@ void KalmanHogTrackableFrame::matchingThread(){
     cv::Mat currentFrame;
     float x=0,y=0,z=0;
     while (!terminated){
-//        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        curState=kalmanPredict();
 //        m_dbg<<"from matchingthread";
         currentFrame=video->getCurrentFrame();
         cv::cvtColor(currentFrame,currentFrame,cv::COLOR_BGR2GRAY);
@@ -43,6 +44,8 @@ void KalmanHogTrackableFrame::matchingThread(){
         minimizewith(extendedRoi.y,currentFrame.rows);
         minimizewith(extendedRoi.width,currentFrame.cols-extendedRoi.x);
         minimizewith(extendedRoi.height,currentFrame.rows-extendedRoi.y);
+//        extendedRoi.x=0;extendedRoi.y=0;
+//        extendedRoi.width=currentFrame.cols;extendedRoi.height=currentFrame.rows;
         std::vector<cv::Rect> foundrects;
         hog->detectMultiScale(currentFrame(extendedRoi),foundrects);
         if (foundrects.size()==0){
@@ -95,7 +98,7 @@ void KalmanHogTrackableFrame::initKalman(float x, float y, float z)
     KF.statePost.at<float>(0, 0) = x;
     KF.statePost.at<float>(1, 0) = y;
     KF.statePost.at<float>(2, 0) = z;
-    int a=2,v=2;
+    float a=0.0001,v=0.01;
     KF.transitionMatrix = (cv::Mat_<float>(9, 9) << 1, 0, 0, v, 0, 0, a, 0, 0,
                                                     0, 1, 0, 0, v, 0, 0, a, 0,
                                                     0, 0, 1, 0, 0, v, 0, 0, a,
@@ -176,6 +179,8 @@ float KalmanHogTrackableFrame::getArea(){
 bool KalmanHogTrackableFrame::checkContains(KalmanHogTrackableFrame *f)
 {
     // TODO : check if shared area is more than 75 of one of them .
+//    f->curState=f->kalmanPredict();
+//    curState=kalmanPredict();
     float sx=max(f->curState.x,curState.x);
     float sy=max(f->curState.y,curState.y);
     float ex=min(f->curState.x+f->curState.z,curState.x+curState.z);

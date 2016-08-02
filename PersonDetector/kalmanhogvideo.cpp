@@ -123,14 +123,15 @@ void KalmanHogVideo::HOGDMSThread(){
 
         for (cv::Rect r:rects){
             KalmanHogTrackableFrame *cur=new KalmanHogTrackableFrame(this,r);
-//            bool found=false;
-//            for (KalmanHogTrackableFrame * f:frames){
-//                if (f->checkContains(cur)){
-//                    found=true;
-//                    break;
-//                }
-//            }
-//            if (!found)
+            bool found=false;
+            for (KalmanHogTrackableFrame * f:frames){
+                if (f->checkContains(cur)){
+                    found=true;
+                    break;
+                }
+            }
+            if (!found)
+//            if (frames.size()==0)
                 frames.insert(cur);
         }
         set<KalmanHogTrackableFrame *> toDel;

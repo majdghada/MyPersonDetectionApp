@@ -80,7 +80,7 @@ std::vector<DetectionWindow> applySlidingWindow(const Mat &img,int minwidth,int 
 {
     vector<DetectionWindow> res;
     scaleRatio=max(img.rows/(double)minheight,img.cols/(double)minwidth);
-    for (int i=0;i<3;++i)scaleRatio=sqrt(scaleRatio);
+    for (int i=0;i<4;++i)scaleRatio=sqrt(scaleRatio);
     m_dbg<<"scaleRatio"<<scaleRatio;
     int level=0;
     for (float scale=1.0;level<maxLevels;scale*=scaleRatio,level++){
